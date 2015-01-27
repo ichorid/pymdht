@@ -15,9 +15,10 @@ import logging, logging_conf
 logger = logging.getLogger('dht')
 
 
-CHECKING_PERIOD = 2 # seconds
+CHECKING_PERIOD = 2  # seconds
 MAX_PACKETS_PER_PERIOD = 10
-BLOCKING_PERIOD = 100 # seconds
+BLOCKING_PERIOD = 100  # seconds
+
 
 class HalfPeriodRegister(object):
 
@@ -31,6 +32,7 @@ class HalfPeriodRegister(object):
 
     def register_ip(self, ip):
         self.ip_dict[ip] = self.ip_dict.get(ip, 0) + 1
+
 
 class FloodBarrier(object):
 
@@ -56,7 +58,7 @@ class FloodBarrier(object):
         """
         Register that a packet has been received from the given IP and return
         whether the host is blocked and, hence, the packet should be dropped
-        
+
         """
         current_time = time.time()
         if current_time > self.last_half_period_time + self.checking_period / 2:
@@ -88,8 +90,5 @@ class FloodBarrier(object):
                 # IP is currently blocked (block hasn't expired)
                 return True
         else:
-
-            
             # IP is not blocked
             return False
-            

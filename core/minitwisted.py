@@ -25,22 +25,23 @@ logger = logging.getLogger('dht')
 BUFFER_SIZE = 3000
 
 DEBUG = False
-                            
+
+
 class ThreadedReactor(threading.Thread):
 
     """
     Object inspired in Twisted's reactor.
     Run in its own thread.
     It is an instance, not a nasty global
-    
+
     """
     def __init__(self, main_loop_f,
                  port, on_datagram_received_f,
                  task_interval=0.1,
                  floodbarrier_active=True):
-        threading.Thread.__init__(self, name = "DHT")
+        threading.Thread.__init__(self, name="DHT")
         self.daemon = True
-        
+
         self._lock = threading.RLock()
         self._running = False
         self._call_asap_queue = []
@@ -86,15 +87,15 @@ class ThreadedReactor(threading.Thread):
                 self._captured.append(capture)
         finally:
             self._lock.release()
-     
+
     def run(self):
         self.run2()
-    
+
     def run2(self):
         """
         The reason for this weird split between run and run2 is that nosetests
         doesn't count run as being executed (it doesn't count as 'covered').
-        
+
         """
         self.running = True
         logger.critical('run')
@@ -133,7 +134,7 @@ class ThreadedReactor(threading.Thread):
         """Main loop activated by calling self.start()"""
 
         # Deal with call_asap requests
-        #TODO: retry for 5 seconds if no msgs_to_send (inside controller?)
+        # TODO: retry for 5 seconds if no msgs_to_send (inside controller?)
         call_asap_tuple = None
         self._lock.acquire()
         try:
@@ -158,7 +159,7 @@ class ThreadedReactor(threading.Thread):
         try:
             data, addr = self.s.recvfrom(BUFFER_SIZE)
         except (socket.timeout):
-            pass #timeout
+            pass  # timeout
         except (socket.error), e:
             logger.warning(
                 'Got socket.error when receiving data:\n%s' % e)
@@ -179,8 +180,8 @@ class ThreadedReactor(threading.Thread):
              datagram_received)
             for datagram in datagrams_to_send:
                 self._sendto(datagram)
-            
-    def stop(self):#, stop_callback):
+
+    def stop(self):  # , stop_callback):
         """Stop the thread. It cannot be resumed afterwards"""
 
         self.running = False
@@ -191,20 +192,20 @@ class ThreadedReactor(threading.Thread):
             self.join(self.task_interval*20)
         if self.isAlive():
             raise Exception, 'Minitwisted thread is still alive!'
-        #TODO: conductor.stop_callback()?
+        # TODO: conductor.stop_callback()?
 
     def call_asap(self, callback_f, *args, **kwds):
         """Call the given callback with given arguments as soon as possible
         (next time run_one_step is called).
-        
-        """ 
+
+        """
         self._lock.acquire()
         try:
             self._call_asap_queue.append((callback_f, args, kwds))
         finally:
             self._lock.release()
         return
-        
+
     def _sendto(self, datagram):
         """Send data to addr using the UDP port used by listen_udp."""
 

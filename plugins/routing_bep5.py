@@ -46,11 +46,11 @@ NODES_PER_BUCKET = [] # 16, 32, 64, 128, 256]
 NODES_PER_BUCKET[:0] = [DEFAULT_NUM_NODES] \
     * (NUM_BUCKETS - len(NODES_PER_BUCKET))
 
-REFRESH_PERIOD = 15 * 60 # 15 minutes
-QUARANTINE_PERIOD = 3 * 60 # 3 minutes
+REFRESH_PERIOD = 15 * 60  # 15 minutes
+QUARANTINE_PERIOD = 3 * 60  # 3 minutes
 
 MAX_NUM_TIMEOUTS = 2
-PING_DELAY_AFTER_TIMEOUT = 30 #seconds
+PING_DELAY_AFTER_TIMEOUT = 30  # seconds
 
 
 MIN_RNODES_BOOTSTRAP = 10
@@ -60,8 +60,8 @@ BOOTSTRAP_MODE = 'bootstrap_mode'
 FIND_NODES_MODE = 'find_nodes_mode'
 NORMAL_MODE = 'normal_mode'
 _MAINTENANCE_DELAY = {BOOTSTRAP_MODE: .2,
-                     FIND_NODES_MODE: 2,
-                     NORMAL_MODE: 2}
+                      FIND_NODES_MODE: 2,
+                      NORMAL_MODE: 2}
 
 
 class RoutingManager(object):
@@ -329,7 +329,7 @@ class RoutingManager(object):
         """
         rnode.real_rtt = rtt
         current_time = time.time()
-        #rnode._reset_refresh_task()
+        # rnode._reset_refresh_task()
         if rnode.in_quarantine:
             rnode.in_quarantine = \
                 rnode.last_action_ts < current_time - QUARANTINE_PERIOD

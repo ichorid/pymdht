@@ -60,7 +60,7 @@ test_data_decode_error = [
     ('leEXTRA', DecodeError), # extra characters after bencode
     ('xWHATEVER', DecodeError), # start with invalid character
     ('dxe', DecodeError), # invalid special character
-    ('ixe', DecodeError), # invalid integer 
+    ('ixe', DecodeError), # invalid integer
     ('li2e', DecodeError), # list end missing
     ('li2eee', DecodeError), # extra end
     ('d3:KEYe', DecodeError), # value missing
@@ -81,7 +81,7 @@ test_data_decode_error = [
     ('2', DecodeError), # open srt (no close)
     ('2:', DecodeError), # open srt (no close)
     ('2:a', DecodeError), # open srt (no close)
-    
+
 #    ('i33z', DecodeError), # No ending for integer
 #    (None, DecodeError),
 #    (1, DecodeError),
@@ -93,7 +93,7 @@ def debug_print(test_num, input_, expected, output):
     input:    %s
     expected: %s
     output:   %s''' % (test_num, input_, expected, output))
-       
+
 
 class TestEncode(unittest.TestCase):
 
@@ -127,7 +127,7 @@ class TestEncode(unittest.TestCase):
                 debug_print(i, data, expected, 'NO EXCEPTION RAISED')
                 assert False # Fail. We got no exception at all.
 
-                
+
 class TestDecode(unittest.TestCase):
 
     def setUp(self):
@@ -165,4 +165,3 @@ class TestDecode(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    

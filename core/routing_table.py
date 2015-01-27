@@ -39,7 +39,7 @@ class Bucket(object):
         self.rnodes.append(rnode)
         if self.ips_in_table is not None:
             self.ips_in_table.add(rnode.ip)
-        #self.last_changed_ts = time.time()
+        # self.last_changed_ts = time.time()
 
     def remove(self, node_):
         i = self._find(node_)
@@ -113,12 +113,13 @@ class Bucket(object):
         for i, rnode in enumerate(self.rnodes):
             if rnode == node_:
                 return i
-        return -1 # not found
+        return -1  # not found
 
 
-
-NUM_SBUCKETS = 160 # log_distance returns a number in range [-1,159]
+NUM_SBUCKETS = 160  # log_distance returns a number in range [-1,159]
 NUM_NODES = 8
+
+
 class RoutingTable(object):
     '''
     '''

@@ -7,10 +7,10 @@ import core.ptime as time
 logger = logging.getLogger('dht')
 
 
-STATUS_OK = 'OK'                 # pinged and give response
-STATUS_TIMEOUT = 'TIMEOUT'       # pinged but fail to response
+STATUS_OK = 'OK'                  # pinged and give response
+STATUS_TIMEOUT = 'TIMEOUT'        # pinged but fail to response
 STATUS_ERROR = 'ERROR'
-STATUS_ON_PROCESS = 'ON_PROCESS' # to be extracting
+STATUS_ON_PROCESS = 'ON_PROCESS'  # to be extracting
 STATUS_COMPLETED = 'COMPLETED'
 
 NUM_REPETITIONS = 5
@@ -25,8 +25,8 @@ class ExperimentalManager:
         self.pinged_ips = {}
         self.num_responses = 0
 
-        self.fob_ok = open('ping_res_ok.txt','w')
-        self.fob_fail = open('ping_res_fail.txt','w')
+        self.fob_ok = open('ping_res_ok.txt', 'w')
+        self.fob_fail = open('ping_res_fail.txt', 'w')
 
         self.nodes_to_extract = []
         self.nodes_in_process = []
@@ -38,7 +38,7 @@ class ExperimentalManager:
             # We only want to extract from ONE node
             self._send_query = False
             logger.info('Got query (%s) from  Node  %r', msg.query, msg.src_node)
-            #keep the node in a list which to be extracted
+            # keep the node in a list which to be extracted
             self.nodes_to_extract.append(msg.src_node)
 
             exp_obj = ExpObj()
@@ -52,7 +52,7 @@ class ExperimentalManager:
 
             _nodes_to_extract = self.nodes_to_extract.pop(exp_obj.index)
 
-            #extracting from node
+            # extracting from node
             find_msgs.append(self.msg_f.outgoing_find_node_query(_nodes_to_extract,
                                                                  target, None,
                                                                  exp_obj))
@@ -68,7 +68,7 @@ class ExperimentalManager:
         if not exp_obj:
             # this is not a extracting related response, nothing to do here
             return
-        #print 'got response', related_query.query
+        # print 'got response', related_query.query
         if related_query.query == message.PING:
             exp_obj.reg_status_of_node(msg.src_node, STATUS_OK)
             self.pinged_ips[msg.src_node.ip] = STATUS_OK
@@ -88,12 +88,12 @@ class ExperimentalManager:
            #print 'Sending %d find and %d pings' % (len(find_msgs),
                                                        #len(ping_msgs))'''
         elif related_query.query == message.FIND_NODE:
-            #print exp_obj.num_repetitions, 'response', msg.all_nodes
-            #print 'got %d all_nodes' % len(msg.all_nodes)
-            #keep all 8 nodes in a list which to be extracted later
+            # print exp_obj.num_repetitions, 'response', msg.all_nodes
+            # print 'got %d all_nodes' % len(msg.all_nodes)
+            # keep all 8 nodes in a list which to be extracted later
             self.nodes_to_extract.append(msg.all_nodes)
 
-            #ping all 8 nodes
+            # ping all 8 nodes
 
             for node_ in msg.all_nodes:
                 if node_.id in exp_obj.all_ids:
@@ -113,7 +113,7 @@ class ExperimentalManager:
                                                                      exp_obj))
 
         exp_obj.num_pending_queries -= 1
-            #END OF EXTRACTION
+        # END OF EXTRACTION
         msgs_to_send = find_msgs + ping_msgs # send ping and continue extracting
         exp_obj.num_pending_queries += len(msgs_to_send)
         if not exp_obj.num_pending_queries:
@@ -130,12 +130,11 @@ class ExperimentalManager:
 
     def on_timeout(self, related_query):
         exp_obj = related_query.experimental_obj
-        if  exp_obj:
-#            print 'Timeout', related_query.query
+        if exp_obj:
+            # print 'Timeout', related_query.query
             if related_query.query == message.PING:
-                exp_obj.reg_status_of_node(
-                                        related_query.dst_node,
-                                        STATUS_TIMEOUT)
+                exp_obj.reg_status_of_node(related_query.dst_node,
+                                           STATUS_TIMEOUT)
             exp_obj.num_pending_queries -= 1
             if not exp_obj.num_pending_queries:
                 exp_obj.print_nodes()
@@ -145,9 +144,8 @@ class ExperimentalManager:
         if exp_obj:
             logger.error('got ERROR %s', related_query.query)
             if related_query.query == message.PING:
-                exp_obj.reg_status_of_node(
-                                        related_query.dst_node,
-                                        STATUS_ERROR)
+                exp_obj.reg_status_of_node(related_query.dst_node,
+                                           STATUS_ERROR)
             exp_obj.num_pending_queries -= 1
             if not exp_obj.num_pending_queries:
                 exp_obj.print_nodes()

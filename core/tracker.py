@@ -4,12 +4,13 @@
 
 import ptime as time
 
-VALIDITY_PERIOD = 30 * 60 #30 minutes
+VALIDITY_PERIOD = 30 * 60  # 30 minutes
 CLEANUP_COUNTER = 100
 
-MAX_PEERS = 50 # Avoids way too long get_peers respoonses (longer than UDP
+MAX_PEERS = 50  # Avoids way too long get_peers respoonses (longer than UDP
 
-#TODO: avoid tracking several ports from the same IP address!
+# TODO: avoid tracking several ports from the same IP address!
+
 
 class Tracker(object):
 
@@ -21,20 +22,20 @@ class Tracker(object):
         self._put_counter = 0
         self.num_keys = 0
         self.num_peers = 0
-        
+
     def put(self, k, peer):
-        #Clean up every n puts
+        # Clean up every n puts
         self._put_counter += 1
         if self._put_counter == self.cleanup_counter:
             self._put_counter = 0
             for k_ in self._tracker_dict.keys():
                 ts_peers = self._tracker_dict[k_]
                 self._cleanup_key(k_)
-                if not ts_peers: #empty list. Delete key
+                if not ts_peers: # empty list. Delete key
                     del self._tracker_dict[k_]
                     self.num_keys -= 1
-        
-        ts_peers = self._tracker_dict.setdefault(k,[])
+
+        ts_peers = self._tracker_dict.setdefault(k, [])
         if not ts_peers:
             self.num_keys += 1
         else:

@@ -57,7 +57,7 @@ NODES = [node.Node(addr, node_id) \
 
 # We don't have RNODES as constant because rnodes are modificable. In
 # particular, it creates temporal depencencies.
-#RNODES = [n.get_rnode() for n in NODES]
+# RNODES = [n.get_rnode() for n in NODES]
 PEERS = ADDRS
 
 NODE2_IDS = [identifier.Id('\x01'+chr(i) * (identifier.ID_SIZE_BYTES-1)) \
@@ -70,16 +70,16 @@ PEERS2 = ADDRS2
 
 IPS = ['1.2.3.' + str(i) for i in xrange(NUM_NODES)]
 
-#TODO2: make this faster
+# TODO2: make this faster
 num_nodes_per_ld = 20
 NODES_LD_IH = [[]] * BITS_PER_BYTE
 for ld in xrange(BITS_PER_BYTE, ID_SIZE_BITS):
     NODES_LD_IH.append([])
     common_id = INFO_HASH_ZERO.generate_close_id(ld)
-    #self.assertEqual(common_id.log_distance(INFO_HASH_ZERO), ld)
+    # self.assertEqual(common_id.log_distance(INFO_HASH_ZERO), ld)
     for i in xrange(num_nodes_per_ld):
         this_id = Id(common_id.bin_id[:-1] + chr(i))
-        #self.assertEqual(this_id.log_distance(INFO_HASH_ZERO), ld)
+        # self.assertEqual(this_id.log_distance(INFO_HASH_ZERO), ld)
         NODES_LD_IH[ld].append(
             node.Node(('128.0.0.' + str(i), ld), this_id))
 num_nodes_per_ld = 50
@@ -87,10 +87,10 @@ NODES_LD_CL = [[]] * BITS_PER_BYTE
 for ld in xrange(BITS_PER_BYTE, ID_SIZE_BITS):
     NODES_LD_CL.append([])
     common_id = CLIENT_ID.generate_close_id(ld)
-    #self.assertEqual(common_id.log_distance(INFO_HASH_ZERO), ld)
+    # self.assertEqual(common_id.log_distance(INFO_HASH_ZERO), ld)
     for i in xrange(num_nodes_per_ld):
         this_id = Id(common_id.bin_id[:-1] + chr(i))
-        #self.assertEqual(this_id.log_distance(INFO_HASH_ZERO), ld)
+        # self.assertEqual(this_id.log_distance(INFO_HASH_ZERO), ld)
         NODES_LD_CL[ld].append(
             node.Node(('128.0.0.' + str(i), ld), this_id))
 

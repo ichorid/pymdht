@@ -26,6 +26,7 @@ MARK_INDEX = 2
 
 ANNOUNCE_REDUNDANCY = 3
 
+
 class _QueuedNode(object):
 
     def __init__(self, node_, log_distance, token):
@@ -35,6 +36,7 @@ class _QueuedNode(object):
 
     def __cmp__(self, other):
         return self.log_distance - other.log_distance
+
 
 class _LookupQueue(object):
 
@@ -56,7 +58,6 @@ class _LookupQueue(object):
 
         self.num_region_responses = 0
         self.num_region_queries = 0
-
 
     def bootstrap(self, rnodes, max_nodes):
         # Assume that the ips are not duplicated.
@@ -177,7 +178,6 @@ class GetPeersLookup(object):
         self._slow_down = False
         self._msg_factory = message.OutgoingGetPeersQuery
 
-
     def _get_max_nodes_to_query(self):
         if self._slow_down:
             return min(self.slowdown_alpha - self._num_parallel_queries,
@@ -257,9 +257,9 @@ class GetPeersLookup(object):
             return [], False
         nodes_to_announce = self._lookup_queue.get_closest_responded_qnodes()
         announce_to_myself = False
-        #TODO: is is worth it to announce to self? The problem is that I don't
-        #know my own IP number. Maybe if 127.0.0.1 translates into "I (the
-        #node returning 127.0.0.1) am in the swarm".
+        # TODO: is is worth it to announce to self? The problem is that I don't
+        # know my own IP number. Maybe if 127.0.0.1 translates into "I (the
+        # node returning 127.0.0.1) am in the swarm".
         '''
         if len(nodes_to_announce) < ANNOUNCE_REDUNDANCY:
             announce_to_myself = True

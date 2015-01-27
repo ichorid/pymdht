@@ -7,28 +7,31 @@ import logging
 
 logger = logging.getLogger('dht')
 
+
 class LoggingException(Exception):
 
     def __init__(self, msg):
         logger.info('%s: %s' % (self.__class__, msg))
-                    
+
 
 class EncodeError(LoggingException):
     """Raised by encoder when invalid input."""
-    
+
+
 class DecodeError(LoggingException):
     """Raised by decoder when invalid bencode input."""
     def __init__(self, msg, bencoded):
         LoggingException.__init__(
             self, '\nBencoded: '.join((msg, repr(bencoded))))
-    
+
+
 class RecursionDepthError(DecodeError):
     """Raised when the bencoded recursivity is too deep.
 
     This check prevents from using too much recursivity when an
     accidentally/maliciously constructed bencoded string looks like
     'llllllllllllllllllllllllllllllllllll'.
-    
+
     """
 
 
@@ -39,7 +42,8 @@ def encode(data):
     result = output.getvalue()
     output.close()
     return result
-        
+
+
 def decode(bencoded, max_depth=4):
     if not bencoded:
         raise DecodeError('Empty bencoded string', bencoded)
@@ -68,14 +72,16 @@ def _encode_str(data, output):
     """
     output.write('%d:%s' % (len(data), data))
 
+
 def _encode_int(data, output):
     """Encode an integer (or long) object
 
     The result format is:
     i<integer encoded in base ten ASCII>e
-    
+
     """
     output.write('i%de' % data)
+
 
 def _encode_list(data, output):
     """Encode a list object
@@ -90,11 +96,12 @@ def _encode_list(data, output):
         encode_f(item, output)
     output.write('e')
 
+
 def _encode_dict(data, output):
     """Encode a dict object
 
     The result format is:
-    d<bencoded key><bencoded value>...<bencoded key><bencoded value>e 
+    d<bencoded key><bencoded value>...<bencoded key><bencoded value>e
     Keys must be string and will be encoded in lexicographical order
 
     """
@@ -110,34 +117,34 @@ def _encode_dict(data, output):
         encode_f(value, output)
     output.write('e')
 
-    
-    
 
 def _decode_str(bencoded, pos, _):
     """
 
-    
+
     """
     str_len, str_begin = _get_int(bencoded, pos, ':')
     str_end = str_begin + str_len
     return (bencoded[str_begin:str_end], str_end)
-        
+
+
 def _decode_int(bencoded, pos, _):
     """
 
-    
+
     """
-    return  _get_int(bencoded, pos + 1, 'e') # +1 to skip 'i'
+    return _get_int(bencoded, pos + 1, 'e') # +1 to skip 'i'
+
 
 def _decode_list(bencoded, pos, max_depth):
     """
 
-    
+
     """
     if max_depth == 0:
         raise RecursionDepthError(
             'maximum recursion depth exceeded', bencoded)
-    
+
     result = []
     next_pos = pos + 1 # skip 'l'
     bencoded_length = len(bencoded)
@@ -150,12 +157,13 @@ def _decode_list(bencoded, pos, max_depth):
             raise DecodeError('End of string and ending character not found',
                               bencoded[pos:])
         result.append(item)
-    
-    return result, next_pos + 1 # correct for 'e'
+
+    return result, next_pos + 1  # correct for 'e'
+
 
 def _decode_dict(bencoded, pos, max_depth):
     """
-    
+
     """
     if max_depth == 0:
         raise RecursionDepthError('maximum recursion depth exceeded',
@@ -189,8 +197,7 @@ def _decode_dict(bencoded, pos, max_depth):
             raise DecodeError('End of string and ending character not found',
                               bencoded[pos:])
         result[key] = value
-    return result, next_pos + 1 # skip 'e'
-
+    return result, next_pos + 1  # skip 'e'
 
 
 def _get_encode_f(value):
@@ -198,7 +205,8 @@ def _get_encode_f(value):
         return _encode_fs[type(value)]
     except (KeyError), e:
         raise EncodeError, 'Invalid type: <%r>' % e
-    
+
+
 def _get_int(bencoded, pos, char):
     try:
         end = bencoded.index(char, pos)
@@ -208,7 +216,8 @@ def _get_int(bencoded, pos, char):
         result = int(bencoded[pos:end])
     except (ValueError), e:
         raise DecodeError('Not an integer: %r' %e, bencoded)
-    return (result, end + 1) # +1 to skip final character
+    return (result, end + 1)  # +1 to skip final character
+
 
 def _get_decode_f(bencoded, pos):
     try:
@@ -216,19 +225,19 @@ def _get_decode_f(bencoded, pos):
     except (KeyError), e:
         raise DecodeError('Caracter in position %d raised %r' % (pos, e),
                           bencoded)
-    
 
-_encode_fs = {str : _encode_str,
-              int :  _encode_int,
-              long : _encode_int,
-              tuple : _encode_list,
-              list :  _encode_list,
-              dict : _encode_dict
+
+_encode_fs = {str: _encode_str,
+              int:  _encode_int,
+              long: _encode_int,
+              tuple: _encode_list,
+              list:  _encode_list,
+              dict: _encode_dict
               }
 
-_decode_fs = {'i' : _decode_int,
-             'l' : _decode_list,
-             'd' : _decode_dict}
+_decode_fs = {'i': _decode_int,
+             'l': _decode_list,
+             'd': _decode_dict}
 for i in xrange(10):
     _decode_fs[str(i)] = _decode_str
 

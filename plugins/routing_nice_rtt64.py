@@ -65,13 +65,14 @@ _MAINTENANCE_DELAY = {BOOTSTRAP_MODE: .2,
                       NORMAL_MODE: 4}
 NUM_FILLING_LOOKUPS = 16
 
+
 class RoutingManager(object):
-    
+
     def __init__(self, my_node, bootstrap_nodes):
         self.my_node = my_node
         #Copy the bootstrap list
         self.bootstrap_nodes = iter(bootstrap_nodes)
-        
+
         self.table = RoutingTable(my_node, NODES_PER_BUCKET)
         # maintenance variables
         self._next_stale_maintenance_index = 0
@@ -85,7 +86,7 @@ class RoutingManager(object):
                                    self._ping_a_replacement_node,
                                    ]
         self._num_pending_filling_lookups = NUM_FILLING_LOOKUPS
-        
+
     def do_maintenance(self):
         queries_to_send = []
         maintenance_lookup_target = None
@@ -114,7 +115,7 @@ class RoutingManager(object):
                     queries_to_send = [self._get_maintenance_query(node_)]
                     # This task did do some work. We are done here!
                     break
-        
+
         return (_MAINTENANCE_DELAY[self._maintenance_mode],
                 queries_to_send, maintenance_lookup_target)
 
@@ -154,9 +155,9 @@ class RoutingManager(object):
 
     def _ping_a_replacement_node(self):
         return self._replacement_queue.pop(0)
-                                  
+
     def _get_maintenance_query(self, node_):
-        if not node_.id: 
+        if not node_.id:
             # Bootstrap nodes don't have id
             return message.OutgoingFindNodeQuery(node_,
                                                  self.my_node.id,
@@ -177,7 +178,7 @@ class RoutingManager(object):
         else:
             # Every bucket is full. We send a ping instead.
             return message.OutgoingPingQuery(node_, self.my_node.id)
-        
+
     def on_query_received(self, node_):
         '''
         Return None when nothing to do
@@ -197,7 +198,7 @@ class RoutingManager(object):
             # node in routing table: inform rnode
             self._update_rnode_on_query_received(rnode)
             return
-        
+
         # node is not in the routing table
         if m_bucket.there_is_room():
             # There is room in the bucket: queue it
@@ -213,7 +214,7 @@ class RoutingManager(object):
             r_bucket.add(rnode)
             self._update_rnode_on_query_received(rnode)
         return
-            
+
     def on_response_received(self, node_, rtt, nodes):
         if nodes:
             logger.debug('nodes found: %r', nodes)
@@ -280,7 +281,7 @@ class RoutingManager(object):
             self.table.num_rnodes += 0
             self._update_rnode_on_response_received(rnode, rtt)
             return
-            
+
         # Get the worst node in replacement bucket and see whether
         # it's bad enough to be replaced by node_
         worst_rnode = self._worst_rnode(r_bucket.rnodes)
@@ -292,10 +293,10 @@ class RoutingManager(object):
             r_bucket.add(rnode)
             self._update_rnode_on_response_received(rnode, rtt)
         return
-        
+
     def on_error_received(self, node_addr):
         pass
-    
+
     def on_timeout(self, node_):
         if not node_.id:
             return [] # This is a bootstrap node (just addr, no id)
@@ -329,7 +330,7 @@ class RoutingManager(object):
             # Node in replacement table: just update rnode
             self._update_rnode_on_timeout(rnode)
         return []
-            
+
     def get_closest_rnodes(self, log_distance, num_nodes, exclude_myself):
         if not num_nodes:
             num_nodes = NODES_PER_BUCKET[log_distance]
@@ -367,7 +368,7 @@ class RoutingManager(object):
         if rnode.in_quarantine:
             rnode.in_quarantine = \
                 rnode.last_action_ts < current_time - QUARANTINE_PERIOD
-                
+
         rnode.last_action_ts = current_time
         rnode.num_responses += 1
         rnode.add_event(time.time(), node.RESPONSE)
@@ -394,7 +395,7 @@ class RoutingManager(object):
                 worst_rnode_so_far = rnode
         return worst_rnode_so_far
 
-        
+
 class _ReplacementQueue(object):
 
     def __init__(self, table):
@@ -414,6 +415,7 @@ class _ReplacementQueue(object):
                 # room in main: return it
                 return rnode
         return
+
 
 class _QueryReceivedQueue(object):
 
@@ -457,6 +459,7 @@ class _QueryReceivedQueue(object):
                 return node_
         return
 
+
 class _FoundNodesQueue(object):
 
     def __init__(self, table):
@@ -489,7 +492,7 @@ class _FoundNodesQueue(object):
                 self._queued_nodes_set.add(node_)
                 self._queue.append(node_)
 
-    def pop(self, _): 
+    def pop(self, _):
         while self._queue:
             node_ = self._queue.pop(0)
             self._queued_nodes_set.remove(node_)
@@ -502,13 +505,13 @@ class _FoundNodesQueue(object):
                 return node_
         return
 
-            
+
 class RoutingManagerMock(object):
 
     def get_closest_rnodes(self, target_id):
         import test_const as tc
         if target_id == tc.INFO_HASH_ZERO:
-            return (tc.NODES_LD_IH[155][4], 
+            return (tc.NODES_LD_IH[155][4],
                     tc.NODES_LD_IH[157][3],
                     tc.NODES_LD_IH[158][1],
                     tc.NODES_LD_IH[159][0],

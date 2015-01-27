@@ -29,21 +29,21 @@ logger = logging.getLogger('dht')
 
 TIMEOUT_DELAY = 2
 
-    
+
 class Querier(object):
     """
     A Querier object keeps a registry of sent queries while waiting for
     responses.
 
     """
-    def __init__(self):#, my_id):
-#        self.my_id = my_id
+    def __init__(self):  # , my_id):
+        # self.my_id = my_id
         self._pending = {}
         self._timeouts = []
         self._tid = [0, 0]
 
     def _next_tid(self):
-        #TODO: move to message?
+        # TODO: move to message?
         current_tid_str = ''.join([chr(c) for c in self._tid])
         self._tid[0] = (self._tid[0] + 1) % 256
         if self._tid[0] == 0:
@@ -100,7 +100,7 @@ class Querier(object):
         Return a tupla with two items: (1) timestamp for next timeout, (2)
         list of message.OutgoingQueryBase objects of those queries that have
         timed-out.
-        
+
         """
         current_ts = time.time()
         timeout_queries = []

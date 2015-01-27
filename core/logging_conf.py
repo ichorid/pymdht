@@ -36,6 +36,7 @@ def testing_setup(module_name):
     logger_conf.setFormatter(logging.Formatter(FORMAT))
     logger.addHandler(logger_conf)
 
+
 def setup(logs_path, logs_level):
     logger = logging.getLogger('dht')
     logger.setLevel(logs_level)
@@ -50,6 +51,7 @@ def setup(logs_path, logs_level):
     logger_conf.setLevel(logs_level)
     logger_conf.setFormatter(logging.Formatter(FORMAT))
     logger.addHandler(logger_conf)
+
 
 def close():
     logger = logging.getLogger('dht')

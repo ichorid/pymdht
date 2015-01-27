@@ -10,7 +10,7 @@ import logging
 
 logger = logging.getLogger('dht')
 
-   
+
 class GetPeersLookup(object):
 
     def __init__(self, msg_f, my_id, lookup_id,
@@ -23,14 +23,14 @@ class GetPeersLookup(object):
         self.bt_port = bt_port
         self._msg_factory = msg_f.outgoing_get_peers_query
         self.start_ts = time.time()
-    
+
     def start(self, bootstrap_rnodes, bootstrapper):
         queries_to_send = [self._msg_factory(bn, self._my_id,
                                              self.info_hash,
                                              self.lookup_id)
                            for bn in bootstrap_rnodes]
         return queries_to_send
-        
+
     def on_response_received(self, response_msg, node_):
         queries_to_send = []
         peers = []
@@ -42,20 +42,21 @@ class GetPeersLookup(object):
     def on_timeout(self, node_):
         queries_to_send = []
         num_parallel_queries = 0
-        lookup_done = True        
+        lookup_done = True
         return (queries_to_send, num_parallel_queries, lookup_done)
-    
-    def on_error(self, error_msg, node_): 
+
+    def on_error(self, error_msg, node_):
         queries_to_send = []
         num_parallel_queries = 0
-        lookup_done = True        
+        lookup_done = True
         return (queries_to_send, num_parallel_queries, lookup_done)
 
     def announce(self):
         announcements_to_send = []
         announce_to_myself = False
         return announcements_to_send, announce_to_myself
-            
+
+
 class MaintenanceLookup(GetPeersLookup):
 
     def __init__(self, msg_f, my_id, target):
@@ -66,8 +67,8 @@ class MaintenanceLookup(GetPeersLookup):
         self.slowdown_alpha = 4
         self.slowdown_m = 1
         self._msg_factory = msg_f.outgoing_find_node_query
-            
-        
+
+
 class LookupManager(object):
 
     def __init__(self, my_id, msg_f, bootstrapper):

@@ -35,7 +35,7 @@ import bootstrap
 
 logger = logging.getLogger('dht')
 
-CACHE_VALID_PERIOD = 5 * 60 # 5 minutes
+CACHE_VALID_PERIOD = 5 * 60  # 5 minutes
 
 
 class Controller:
@@ -48,7 +48,7 @@ class Controller:
                  bootstrap_mode):
         self.bootstrapper = bootstrap.OverlayBootstrapper(conf_path)
         my_addr = my_node.addr
-        self._my_id = my_node.id # id indicated by user 
+        self._my_id = my_node.id  # id indicated by user
         if not self._my_id:
             self._my_id = self._my_id = identifier.RandomId() # random id
         self._my_node = Node(my_addr, self._my_id, version=version_label)
@@ -61,18 +61,18 @@ class Controller:
         self._responder = responder.Responder(self._my_id, self._routing_m,
                                               self.msg_f, bootstrap_mode)
         self._tracker = self._responder._tracker
-        
+
         self._lookup_m = lookup_m_mod.LookupManager(self._my_id, self.msg_f,
                                                     self.bootstrapper)
         self._experimental_m = experimental_m_mod.ExperimentalManager(
-            self._my_node.id, self.msg_f) 
-                  
+            self._my_node.id, self.msg_f)
+
         current_ts = time.time()
         self._next_maintenance_ts = current_ts
         self._next_timeout_ts = current_ts
         self._next_main_loop_call_ts = current_ts
         self._cached_lookups = []
-           
+
     def on_stop(self):
         self._experimental_m.on_stop()
         self.bootstrapper.save_to_file()
@@ -103,7 +103,7 @@ class Controller:
         queries_to_send = []
         distance = lookup_obj.info_hash.distance(self._my_id)
         bootstrap_rnodes = self._routing_m.get_closest_rnodes(
-            distance.log, 0, True) #TODO: get the full bucket
+            distance.log, 0, True)  # TODO: get the full bucket
         # look if I'm tracking this info_hash
         peers = self._tracker.get(lookup_obj.info_hash)
         callback_f = lookup_obj.callback_f
@@ -118,7 +118,7 @@ class Controller:
 
         datagrams_to_send = self._register_queries(queries_to_send)
         return datagrams_to_send
-    
+
     def _get_cached_peers(self, info_hash):
         oldest_valid_ts = time.time() - CACHE_VALID_PERIOD
         for ts, cached_info_hash, peers in self._cached_lookups:
@@ -157,14 +157,14 @@ class Controller:
 
         queries_to_send = []
         current_ts = time.time()
-        #TODO: I think this if should be removed
+        # TODO: I think this if should be removed
         # At most, 1 second between calls to main_loop after the first call
         if current_ts >= self._next_main_loop_call_ts:
             self._next_main_loop_call_ts = current_ts + 1
         else:
             # It's too early
             return self._next_main_loop_call_ts, []
-        
+
         # Take care of timeouts
         if current_ts >= self._next_timeout_ts:
             (self._next_timeout_ts,
@@ -206,25 +206,25 @@ class Controller:
 
         """
         exp_queries_to_send = []
-        
+
         data = datagram.data
         addr = datagram.addr
         datagrams_to_send = []
         try:
             msg = self.msg_f.incoming_msg(datagram)
-            
+
         except(message.MsgError):
             # ignore message
             return self._next_main_loop_call_ts, datagrams_to_send
 
         if msg.type == message.QUERY:
-           
+
             if msg.src_node.id == self._my_id:
                 logger.debug('Got a msg from myself:\n%r', msg)
                 return self._next_main_loop_call_ts, datagrams_to_send
-            #zinat: inform experimental_module
+            # zinat: inform experimental_module
             exp_queries_to_send = self._experimental_m.on_query_received(msg)
-            
+
             response_msg = self._responder.get_response(msg)
             if response_msg:
                 bencoded_response = response_msg.stamp(msg.tid)
@@ -232,16 +232,15 @@ class Controller:
                     message.Datagram(bencoded_response, addr))
             maintenance_queries_to_send = self._routing_m.on_query_received(
                 msg.src_node)
-            
+
         elif msg.type == message.RESPONSE:
             related_query = self._querier.get_related_query(msg)
             if not related_query:
                 # Query timed out or unrequested response
                 return self._next_main_loop_call_ts, datagrams_to_send
-            ## zinat: if related_query.experimental_obj:
-            exp_queries_to_send = self._experimental_m.on_response_received(
-                                                        msg, related_query)
-            #TODO: you need to get datagrams to be able to send messages (raul)
+            # zinat: if related_query.experimental_obj:
+            exp_queries_to_send = self._experimental_m.on_response_received(msg, related_query)
+            # TODO: you need to get datagrams to be able to send messages (raul)
             # lookup related tasks
             if related_query.lookup_obj:
                 (lookup_queries_to_send,
@@ -268,7 +267,7 @@ class Controller:
                     datagrams = self._register_queries(
                         queries_to_send)
                     datagrams_to_send.extend(datagrams)
-                    
+
             # maintenance related tasks
             maintenance_queries_to_send = \
                 self._routing_m.on_response_received(
@@ -279,7 +278,7 @@ class Controller:
             if not related_query:
                 # Query timed out or unrequested response
                 return self._next_main_loop_call_ts, datagrams_to_send
-            #TODO: zinat: same as response
+            # TODO: zinat: same as response
             exp_queries_to_send = self._experimental_m.on_error_received(
                 msg, related_query)
             # lookup related tasks
@@ -317,14 +316,16 @@ class Controller:
 
     def _on_query_received(self):
         return
+
     def _on_response_received(self):
         return
+
     def _on_error_received(self):
         return
 
     def _on_timeout(self, related_query):
         queries_to_send = []
-        #TODO: on_timeout should return queries (raul)
+        # TODO: on_timeout should return queries (raul)
         exp_queries_to_send = self._experimental_m.on_timeout(related_query)
         if related_query.lookup_obj:
             (lookup_queries_to_send,
@@ -337,8 +338,7 @@ class Controller:
                 lookup_id = related_query.lookup_obj.lookup_id
                 if callback_f and callable(callback_f):
                     related_query.lookup_obj.callback_f(lookup_id, None, None)
-                queries_to_send.extend(self._announce(
-                        related_query.lookup_obj))
+                queries_to_send.extend(self._announce(related_query.lookup_obj))
         maintenance_queries_to_send = self._routing_m.on_timeout(
             related_query.dst_node)
         if maintenance_queries_to_send:
@@ -355,7 +355,7 @@ class Controller:
     self._tracker.put(lookup_obj._info_hash,
     (self._my_node.addr[0], lookup_obj._bt_port))
     '''
-    
+
     def _register_queries(self, queries_to_send, lookup_obj=None):
         if not queries_to_send:
             return []
@@ -364,4 +364,3 @@ class Controller:
         self._next_main_loop_call_ts = min(self._next_main_loop_call_ts,
                                            timeout_call_ts)
         return datagrams_to_send
-    
