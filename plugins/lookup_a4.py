@@ -164,7 +164,7 @@ class GetPeersLookup(object):
         self.slowdown_m = 1
 
         self.start_ts = time.time()
-        logger.debug('New lookup (info_hash: %r) %d' % (info_hash, bt_port))
+        logger.debug('New lookup (info_hash: %r) %d', info_hash, bt_port)
         self._my_id = my_id
         self.lookup_id = lookup_id
         self.callback_f = callback_f
@@ -216,7 +216,7 @@ class GetPeersLookup(object):
         return queries_to_send
 
     def on_response_received(self, response_msg, node_):
-        logger.debug('response from %r\n%r' % (node_, response_msg))
+        logger.debug('response from %r\n%r', node_, response_msg)
         if self.bootstrapper:
             self.bootstrapper.report_reachable(node_.addr, 0)
         self._num_parallel_queries -= 1
@@ -236,7 +236,7 @@ class GetPeersLookup(object):
                 lookup_done)
 
     def on_timeout(self, node_):
-        logger.debug('TIMEOUT node: %r' % node_)
+        logger.debug('TIMEOUT node: %r', node_)
         if self.bootstrapper:
             self.bootstrapper.report_unreachable(node_.addr)
         self._num_parallel_queries -= 1
@@ -292,7 +292,7 @@ class GetPeersLookup(object):
         '''
         queries_to_send = []
         for qnode in nodes_to_announce:
-            logger.debug('announcing to %r' % qnode.node)
+            logger.debug('announcing to %r', qnode.node)
             query = self.msg_f.outgoing_announce_peer_query(
                 qnode.node, self.info_hash, self._bt_port, qnode.token)
             queries_to_send.append(query)

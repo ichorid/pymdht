@@ -142,7 +142,7 @@ class GetPeersLookup(object):
         self.normal_m = 2
         self.slowdown_alpha = 999
         self.slowdown_m = 2
-        logger.debug('New lookup (info_hash: %r)' % info_hash)
+        logger.debug('New lookup (info_hash: %r)', info_hash)
         self._my_id = my_id
         self.lookup_id = lookup_id
         self.callback_f = callback_f
@@ -179,7 +179,7 @@ class GetPeersLookup(object):
         return queries_to_send
 
     def on_response_received(self, response_msg, node_):
-        logger.debug('response from %r\n%r' % (node_, response_msg))
+        logger.debug('response from %r\n%r', node_, response_msg)
         self._num_parallel_queries -= 1
         self.num_responses += 1
         token = getattr(response_msg, 'token', None)
@@ -197,7 +197,7 @@ class GetPeersLookup(object):
                 lookup_done)
 
     def on_timeout(self, node_):
-        logger.debug('TIMEOUT node: %r' % node_)
+        logger.debug('TIMEOUT node: %r', node_)
         self._num_parallel_queries -= 1
         self.num_timeouts += 1
         self._slow_down = True
@@ -210,7 +210,7 @@ class GetPeersLookup(object):
                 lookup_done)
 
     def on_error_received(self, error_msg, node_addr):
-        logger.debug('Got error from node addr: %r' % node_addr)
+        logger.debug('Got error from node addr: %r', node_addr)
         self._num_parallel_queries -= 1
         self.num_errors += 1
 
@@ -252,7 +252,7 @@ class GetPeersLookup(object):
         '''
         queries_to_send = []
         for qnode in nodes_to_announce:
-            logger.debug('announcing to %r' % qnode.node)
+            logger.debug('announcing to %r', qnode.node)
             query = message.OutgoingAnnouncePeerQuery(qnode.node,
                                                       self._my_id, self.info_hash,
                                                       self._bt_port, qnode.token)
