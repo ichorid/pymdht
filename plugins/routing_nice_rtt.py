@@ -59,18 +59,18 @@ IMPORTANT: Notice there is NO bucket for -1
 """
 
 DEFAULT_NUM_NODES = 8
-NODES_PER_BUCKET = [] # 16, 32, 64, 128, 256]
+NODES_PER_BUCKET = []  # 16, 32, 64, 128, 256]
 NODES_PER_BUCKET[:0] = [DEFAULT_NUM_NODES] \
     * (NUM_BUCKETS - len(NODES_PER_BUCKET))
 
-REFRESH_PERIOD = 15 * 60 # 15 minutes
-QUARANTINE_PERIOD = 3 * 60 # 3 minutes
+REFRESH_PERIOD = 15 * 60  # 15 minutes
+QUARANTINE_PERIOD = 3 * 60  # 3 minutes
 
 MAX_NUM_TIMEOUTS = 2
-PING_DELAY_AFTER_TIMEOUT = 30 #seconds
+PING_DELAY_AFTER_TIMEOUT = 30  # seconds
 
 FIND_CLOSEST_MODE = 'find_closest_mode'
-FILL_BUCKETS= 'fill_buckets'
+FILL_BUCKETS = 'fill_buckets'
 NORMAL_MODE = 'normal_mode'
 _MAINTENANCE_DELAY = {FIND_CLOSEST_MODE: 3,
                       FILL_BUCKETS: 1,
@@ -78,13 +78,14 @@ _MAINTENANCE_DELAY = {FIND_CLOSEST_MODE: 3,
 
 MIN_RNODES = 100
 
-NUM_FILLING_LOOKUPS = 0 #FIXME: it was 8
-MAX_TIMEOUTS_IN_A_ROW = 10 # When x timeouts in a row, we consider that the
+NUM_FILLING_LOOKUPS = 0  # FIXME: it was 8
+MAX_TIMEOUTS_IN_A_ROW = 10  # When x timeouts in a row, we consider that the
 # nodes is (temporarely) off-line and stop expelling nodes from routing table
 # so that these nodes can be refreshed when/if the node comes on-line again.
 
+
 class RoutingManager(object):
-    
+
     def __init__(self, my_node, msg_f, bootstrapper):
         self.my_node = my_node
         self.msg_f = msg_f
@@ -111,13 +112,12 @@ class RoutingManager(object):
             log_distance = lookup_target.distance(self.my_node.id).log
             nodes = self.get_closest_rnodes(log_distance, 0, True)
         return lookup_target, nodes
-        
-                
+
     def do_maintenance(self):
         queries_to_send = []
         maintenance_lookup = None
         maintenance_delay = 0
-        if self._maintenance_mode == FILL_BUCKETS: #TODO: kill
+        if self._maintenance_mode == FILL_BUCKETS:  # TODO: kill
             if self._num_pending_filling_lookups:
                 self._num_pending_filling_lookups -= 1
                 maintenance_lookup = self._get_maintenance_lookup()
@@ -169,13 +169,13 @@ class RoutingManager(object):
         if node_:
             logger.debug('pinging node found: %r', node_)
         return node_
-        
+
     def _ping_a_query_received_node(self):
         return self._query_received_queue.pop(0)
 
     def _ping_a_replacement_node(self):
         return self._replacement_queue.pop(0)
-                                  
+
     def _get_maintenance_query(self, node_, do_fill_up=False):
         if do_fill_up or random.choice((False, True)):
 
@@ -194,7 +194,7 @@ class RoutingManager(object):
             msg = self.msg_f.outgoing_find_node_query(node_,
                                                       self.my_node.id, None)
         return msg
-        
+
     def on_query_received(self, node_):
         '''
         Return None when nothing to do
@@ -208,8 +208,8 @@ class RoutingManager(object):
             return
         try:
             sbucket = self.table.get_sbucket(log_distance)
-        except(IndexError):
-            return # Got a query from myself. Just ignore it.
+        except (IndexError):
+            return  # Got a query from myself. Just ignore it.
 
         m_bucket = sbucket.main
         r_bucket = sbucket.replacement
@@ -221,7 +221,7 @@ class RoutingManager(object):
             # This IP is in the table. Stop here to avoid multiple entries
             # with the same IP
             return
-        
+
         # Now, consider adding this node to the routing table
         if m_bucket.there_is_room():
             # There is room in the bucket: queue it
@@ -237,7 +237,7 @@ class RoutingManager(object):
             r_bucket.add(rnode)
             self._update_rnode_on_query_received(rnode)
         return
-            
+
     def on_response_received(self, node_, rtt, nodes):
         self._num_timeouts_in_a_row = 0
 
@@ -252,8 +252,8 @@ class RoutingManager(object):
             return
         try:
             sbucket = self.table.get_sbucket(log_distance)
-        except(IndexError):
-            return # Got a response from myself. Just ignore it.
+        except (IndexError):
+            return  # Got a response from myself. Just ignore it.
         m_bucket = sbucket.main
         r_bucket = sbucket.replacement
         rnode = m_bucket.get_rnode(node_)
@@ -267,14 +267,14 @@ class RoutingManager(object):
             # This IP is in the table. Stop here to avoid multiple entries
             # with the same IP
             return
-        
+
         # Now, consider adding this node to the routing table
         rnode = r_bucket.get_rnode(node_)
         if rnode:
             # node in replacement table
             # let's see whether there is room in the main
             self._update_rnode_on_response_received(rnode, rtt)
-            #TODO: leave this for the maintenance task
+            # TODO: leave this for the maintenance task
             if m_bucket.there_is_room():
                 m_bucket.add(rnode)
                 self.table.num_rnodes += 1
@@ -283,7 +283,7 @@ class RoutingManager(object):
             return
         # The node is nowhere
         # Add to main table (if the bucket is not full)
-        #TODO: check whether in replacement_mode
+        # TODO: check whether in replacement_mode
         if m_bucket.there_is_room():
             rnode = node_.get_rnode(log_distance)
             m_bucket.add(rnode)
@@ -316,7 +316,7 @@ class RoutingManager(object):
             self.table.num_rnodes += 0
             self._update_rnode_on_response_received(rnode, rtt)
             return
-            
+
         # Get the worst node in replacement bucket and see whether
         # it's bad enough to be replaced by node_
         worst_rnode = self._worst_rnode(r_bucket.rnodes)
@@ -328,12 +328,12 @@ class RoutingManager(object):
             r_bucket.add(rnode)
             self._update_rnode_on_response_received(rnode, rtt)
         return
-        
+
     def on_error_received(self, node_addr):
         # if self.bootstrapper.is_bootstrap_node(node_):
         #     return
         return
-    
+
     def on_timeout(self, node_):
         if not node_.id:
             # this is an overlay bootstrap node (no id). Ignore.
@@ -347,7 +347,7 @@ class RoutingManager(object):
         try:
             sbucket = self.table.get_sbucket(log_distance)
         except (IndexError):
-            return [] # Got a timeout from myself, WTF? Just ignore.
+            return []  # Got a timeout from myself, WTF? Just ignore.
         m_bucket = sbucket.main
         r_bucket = sbucket.replacement
         rnode = m_bucket.get_rnode(node_)
@@ -373,7 +373,7 @@ class RoutingManager(object):
             # Node in replacement table: just update rnode
             self._update_rnode_on_timeout(rnode)
         return []
-            
+
     def get_closest_rnodes(self, log_distance, num_nodes, exclude_myself):
         if not num_nodes:
             num_nodes = NODES_PER_BUCKET[log_distance]
@@ -414,7 +414,7 @@ class RoutingManager(object):
         if rnode.in_quarantine:
             rnode.in_quarantine = \
                 rnode.last_action_ts < current_time - QUARANTINE_PERIOD
-                
+
         rnode.last_action_ts = current_time
         rnode.num_responses += 1
         rnode.add_event(time.time(), node.RESPONSE)
@@ -441,7 +441,7 @@ class RoutingManager(object):
                 worst_rnode_so_far = rnode
         return worst_rnode_so_far
 
-        
+
 class _ReplacementQueue(object):
 
     def __init__(self, table):
@@ -461,6 +461,7 @@ class _ReplacementQueue(object):
                 # room in main: return it
                 return rnode
         return
+
 
 class _QueryReceivedQueue(object):
 
@@ -504,6 +505,7 @@ class _QueryReceivedQueue(object):
                 return node_
         return
 
+
 class _FoundNodesQueue(object):
 
     def __init__(self, table):
@@ -525,8 +527,8 @@ class _FoundNodesQueue(object):
                 continue
             try:
                 sbucket = self.table.get_sbucket(log_distance)
-            except(IndexError):
-                continue # this node is myself (index == -1)
+            except (IndexError):
+                continue  # this node is myself (index == -1)
             m_bucket = sbucket.main
             if node_.ip not in m_bucket.ips_in_table and m_bucket.there_is_room():
                 # IP not in table: add to the queue if there is room in main
@@ -535,7 +537,7 @@ class _FoundNodesQueue(object):
                 self._queued_nodes_set.add(node_)
                 self._queue.append(node_)
 
-    def pop(self, _): 
+    def pop(self, _):
         while self._queue:
             node_ = self._queue.pop(0)
             self._queued_nodes_set.remove(node_)
@@ -548,13 +550,13 @@ class _FoundNodesQueue(object):
                 return node_
         return
 
-            
+
 class RoutingManagerMock(object):
 
     def get_closest_rnodes(self, target_id):
         import test_const as tc
         if target_id == tc.INFO_HASH_ZERO:
-            return (tc.NODES_LD_IH[155][4], 
+            return (tc.NODES_LD_IH[155][4],
                     tc.NODES_LD_IH[157][3],
                     tc.NODES_LD_IH[158][1],
                     tc.NODES_LD_IH[159][0],

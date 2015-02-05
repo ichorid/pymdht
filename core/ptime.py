@@ -12,6 +12,7 @@ else:
 
 time = sleep = is_real = None
 
+
 def normal_mode():
     global time
     global sleep
@@ -20,6 +21,7 @@ def normal_mode():
     time = portable_standard_time
     sleep = standard_time.sleep
     is_real = True
+
 
 def mock_mode():
     global time
@@ -44,6 +46,5 @@ class _MockTime(object):
         self._extra_time += period
 
 
-# When the module is loaded, ptime is in normal mode 
+# When the module is loaded, ptime is in normal mode
 normal_mode()
-

@@ -42,15 +42,15 @@ IMPORTANT: Notice there is NO bucket for -1
 """
 
 DEFAULT_NUM_NODES = 8
-NODES_PER_BUCKET = [] # 16, 32, 64, 128, 256]
+NODES_PER_BUCKET = []  # 16, 32, 64, 128, 256]
 NODES_PER_BUCKET[:0] = [DEFAULT_NUM_NODES] \
     * (NUM_BUCKETS - len(NODES_PER_BUCKET))
 
-REFRESH_PERIOD = 15 * 60 # 15 minutes
-QUARANTINE_PERIOD = 3 * 60 # 3 minutes
+REFRESH_PERIOD = 15 * 60   # 15 minutes
+QUARANTINE_PERIOD = 3 * 60  # 3 minutes
 
 MAX_NUM_TIMEOUTS = 2
-PING_DELAY_AFTER_TIMEOUT = 30 #seconds
+PING_DELAY_AFTER_TIMEOUT = 30  # seconds
 
 
 MIN_RNODES_BOOTSTRAP = 10
@@ -60,21 +60,21 @@ BOOTSTRAP_MODE = 'bootstrap_mode'
 FIND_NODES_MODE = 'find_nodes_mode'
 NORMAL_MODE = 'normal_mode'
 _MAINTENANCE_DELAY = {BOOTSTRAP_MODE: .2,
-                     FIND_NODES_MODE: 2,
-                     NORMAL_MODE: 2}
+                      FIND_NODES_MODE: 2,
+                      NORMAL_MODE: 2}
 
 
 class RoutingManager(object):
 
     def __init__(self, my_node, bootstrap_nodes):
         self.my_node = my_node
-        #Copy the bootstrap list
+        # Copy the bootstrap list
         self.bootstrap_nodes = iter(bootstrap_nodes)
 
         self.table = RoutingTable(my_node, NODES_PER_BUCKET)
         # maintenance variables
         self._maintenance_mode = BOOTSTRAP_MODE
-        self._pinged_q_rnodes = {} # questionable nodes which have been
+        self._pinged_q_rnodes = {}  # questionable nodes which have been
         # recently pinged
         self._maintenance_tasks = [self._refresh_stale_bucket,
             #self._ping_a_staled_rnode,
@@ -132,7 +132,7 @@ class RoutingManager(object):
         log_distance = self.my_node.log_distance(node_)
         try:
             sbucket = self.table.get_sbucket(log_distance)
-        except(IndexError):
+        except (IndexError):
             return # Got a query from myself. Just ignore it.
 
         m_bucket = sbucket.main
@@ -177,7 +177,7 @@ class RoutingManager(object):
         log_distance = self.my_node.log_distance(node_)
         try:
             sbucket = self.table.get_sbucket(log_distance)
-        except(IndexError):
+        except (IndexError):
             return # Got a response from myself. Just ignore it.
         m_bucket = sbucket.main
         rnode = m_bucket.get_rnode(node_)
@@ -258,12 +258,12 @@ class RoutingManager(object):
 
     def on_timeout(self, node_):
         if not node_.id:
-            return [] # This is a bootstrap node (just addr, no id)
+            return []  # This is a bootstrap node (just addr, no id)
         log_distance = self.my_node.log_distance(node_)
         try:
             sbucket = self.table.get_sbucket(log_distance)
         except (IndexError):
-            return [] # Got a timeout from myself, WTF? Just ignore.
+            return []  # Got a timeout from myself, WTF? Just ignore.
         m_bucket = sbucket.main
         rnode = m_bucket.get_rnode(node_)
 
@@ -312,7 +312,6 @@ class RoutingManager(object):
         """Register a query from node.
 
         You should call this method when receiving a query from this node.
-
         """
         current_time = time.time()
         rnode.last_action_ts = time.time()
@@ -325,7 +324,6 @@ class RoutingManager(object):
         """Register a reply from rnode.
 
         You should call this method when receiving a response from this rnode.
-
         """
         rnode.real_rtt = rtt
         current_time = time.time()
@@ -343,7 +341,6 @@ class RoutingManager(object):
         """Register a timeout for this rnode.
 
         You should call this method when getting a timeout for this node.
-
         """
         rnode.last_action_ts = time.time()
         rnode.msgs_since_timeout = 0

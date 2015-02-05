@@ -37,9 +37,10 @@ LOCAL_UNSTABLE_FILENAME = 'pymdht.bootstrap'
 
 MAX_ZERO_UPTIME_ADDRS = 2100
 MAX_LONG_UPTIME_ADDRS = 2500
-ADD_LONG_UPTIME_ADDR_EACH =  3600 # one hour
-MIN_LONG_UPTIME = 3600 # one hour
-MAX_LONG_UPTIME = 24 * 3600 # write to file, don't wait
+ADD_LONG_UPTIME_ADDR_EACH = 3600  # one hour
+MIN_LONG_UPTIME = 3600  # one hour
+MAX_LONG_UPTIME = 24 * 3600  # write to file, don't wait
+
 
 class OverlayBootstrapper(object):
 
@@ -73,7 +74,7 @@ class OverlayBootstrapper(object):
             logger.debug("File does not exist")
             local_exists = False
         else:
-            #TODO: use unstable if too few addrs in local? I don't think so
+            # TODO: use unstable if too few addrs in local? I don't think so
             local_exists = True
             for line in f:
                 addr = _sanitize_bootstrap_addr(line)
@@ -95,7 +96,7 @@ class OverlayBootstrapper(object):
                 self._all_subnets.add(utils.get_subnet(addr))
         logger.debug('%s: %d hardcoded, %d unstable',
                      filename, len(self.hardcoded_ips), len(self._unstable_ip_port))
-        #long-term variables
+        # long-term variables
         self.next_long_uptime_add_ts = time.time() # do first add asap
         self.longest_uptime = MIN_LONG_UPTIME
         self.longest_uptime_addr = None
@@ -105,21 +106,21 @@ class OverlayBootstrapper(object):
         return len(self._unstable_ip_port)
 
     def get_sample_unstable_addrs(self, num_addrs):
-        #TODO: known issue (not critical)
-        #If you get a new sample before the previous one is consumed
-        #(i.e. self._sample_unstable_addrs == []), one of the assumptions of the
-        #off-line detector is broken and the detector will not work.
+        # TODO: known issue (not critical)
+        # If you get a new sample before the previous one is consumed
+        # (i.e. self._sample_unstable_addrs == []), one of the assumptions of the
+        # off-line detector is broken and the detector will not work.
         if self._sample_unstable_addrs:
             i_warn_you_msg = "You are messing with my off-line detector, my friend"
             logger.warning(i_warn_you_msg)
-        if 1:#len(self._unstable_ip_port) < num_addrs:
+        if 1:  # len(self._unstable_ip_port) < num_addrs:
             logger.debug('>>>len(self._unstable_ip_port) == %d, num_addrs: %d',
                          len(self._unstable_ip_port), num_addrs)
 
         self._sample_unstable_addrs = random.sample(
             self._unstable_ip_port.items(),
             min(num_addrs, len(self._unstable_ip_port))
-            ) #TODO: what if the file is empty/contains too few nodes?
+            )  # TODO: what if the file is empty/contains too few nodes?
         # return a copy (lookup manager may modify it)
         return self._sample_unstable_addrs[:]
 
@@ -163,8 +164,8 @@ class OverlayBootstrapper(object):
                 logger.debug('OFF-LINE %s:%s', addr[0], addr[1])
                 return
             else:
-                self._sample_unstable_addrs = [] # end off-line mode
-        #remove from dict (if present)
+                self._sample_unstable_addrs = []  # end off-line mode
+        # remove from dict (if present)
         del self._unstable_ip_port[addr[0]]
         self._all_subnets.remove(utils.get_subnet(addr))
         logger.debug('REMOVED %s:%s', addr[0], addr[1])

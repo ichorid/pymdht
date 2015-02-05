@@ -28,7 +28,7 @@ if random.random() > .8:
     print >>sys.stderr, '>>>>>>>>> Running cpu intensive tests in test_querier'
 else:
     RUN_CPU_INTENSIVE_TESTS = False
-    
+
 TIMEOUT_DELAY = 3
 LOOKUP_OBJ = 1
 
@@ -38,25 +38,26 @@ VERSION_LABEL = ''.join(
      chr((PYMDHT_VERSION[0] - 11) * 24 + PYMDHT_VERSION[1]),
      chr(PYMDHT_VERSION[2])
      ])
-  
+
 clients_msg_f = message.MsgFactory(VERSION_LABEL, tc.CLIENT_ID)
 servers_msg_f = message.MsgFactory(VERSION_LABEL, tc.SERVER_ID)
+
 
 class TestQuerier(unittest.TestCase):
 
     def setUp(self):
         time.mock_mode()
-        self.querier = Querier()#tc.CLIENT_ID)
+        self.querier = Querier()  # tc.CLIENT_ID)
 
     def test_generate_tids(self):
-        #TODO: move to message
+        # TODO: move to message
         if RUN_CPU_INTENSIVE_TESTS:
-            num_tids =  pow(2, 16) + 2 #CPU intensive
+            num_tids = pow(2, 16) + 2  # CPU intensive
         else:
             num_tids = 1000
         for i in xrange(num_tids):
             self.assertEqual(self.querier._next_tid(),
-                chr(i%256)+chr((i/256)%256))
+                             chr(i % 256) + chr((i/256) % 256))
 
     def test_ping_with_reponse(self):
         # Client creates a query
@@ -97,8 +98,7 @@ class TestQuerier(unittest.TestCase):
         ping_r_msg_out = servers_msg_f.outgoing_ping_response(tc.CLIENT_NODE)
         bencoded_r = ping_r_msg_out.stamp('zz')
         # The client receives the bencoded message
-        ping_r_in = clients_msg_f.incoming_msg(
-                Datagram(bencoded_r, tc.SERVER_ADDR))
+        ping_r_in = clients_msg_f.incoming_msg(Datagram(bencoded_r, tc.SERVER_ADDR))
         related_query = self.querier.get_related_query(ping_r_in)
         assert related_query is None
 
@@ -114,11 +114,10 @@ class TestQuerier(unittest.TestCase):
         ping_r_msg_out = servers_msg_f.outgoing_ping_response(tc.CLIENT_NODE)
         bencoded_r = ping_r_msg_out.stamp('zz')
         # The client receives the bencoded message
-        ping_r_in = clients_msg_f.incoming_msg(
-                    Datagram(bencoded_r, tc.SERVER_ADDR))
+        ping_r_in = clients_msg_f.incoming_msg(Datagram(bencoded_r, tc.SERVER_ADDR))
         related_query = self.querier.get_related_query(ping_r_in)
         assert related_query is None
-        
+
     def test_error_received(self):
         # Client creates a query
         msg = clients_msg_f.outgoing_ping_query(tc.SERVER_NODE)
@@ -128,12 +127,10 @@ class TestQuerier(unittest.TestCase):
         # Client sends bencoded_msg
         time.sleep(1)
         # Server gets bencoded_msg and creates response
-        ping_r_msg_out = servers_msg_f.outgoing_error(tc.CLIENT_NODE,
-                                                  message.GENERIC_E)
+        ping_r_msg_out = servers_msg_f.outgoing_error(tc.CLIENT_NODE, message.GENERIC_E)
         bencoded_r = ping_r_msg_out.stamp(msg.tid)
         # The client receives the bencoded message
-        ping_r_in = clients_msg_f.incoming_msg(
-                    Datagram(bencoded_r, tc.SERVER_ADDR))
+        ping_r_in = clients_msg_f.incoming_msg(Datagram(bencoded_r, tc.SERVER_ADDR))
         related_query = self.querier.get_related_query(ping_r_in)
         assert related_query is msg
 
@@ -149,30 +146,25 @@ class TestQuerier(unittest.TestCase):
         # response for queries[3]
         ping_r_msg_out = servers_msg_f.outgoing_ping_response(tc.CLIENT_NODE)
         bencoded_r = ping_r_msg_out.stamp(msgs[3].tid)
-        ping_r_in = clients_msg_f.incoming_msg(
-                        Datagram(bencoded_r, tc.SERVER_ADDR))
+        ping_r_in = clients_msg_f.incoming_msg(Datagram(bencoded_r, tc.SERVER_ADDR))
         related_query = self.querier.get_related_query(ping_r_in)
         assert related_query is msgs[3]
         # error for queries[2]
-        ping_r_msg_out = servers_msg_f.outgoing_error(tc.CLIENT_NODE,
-                                                  message.GENERIC_E)
+        ping_r_msg_out = servers_msg_f.outgoing_error(tc.CLIENT_NODE, message.GENERIC_E)
         bencoded_r = ping_r_msg_out.stamp(msgs[2].tid)
-        ping_r_in = clients_msg_f.incoming_msg(
-                        Datagram(bencoded_r, tc.SERVER_ADDR))
+        ping_r_in = clients_msg_f.incoming_msg(Datagram(bencoded_r, tc.SERVER_ADDR))
         related_query = self.querier.get_related_query(ping_r_in)
         assert related_query is msgs[2]
         # response to wrong addr
         ping_r_msg_out = servers_msg_f.outgoing_ping_response(tc.CLIENT_NODE)
         bencoded_r = ping_r_msg_out.stamp(msgs[5].tid)
-        ping_r_in = clients_msg_f.incoming_msg(
-                        Datagram(bencoded_r, tc.SERVER2_ADDR))
+        ping_r_in = clients_msg_f.incoming_msg(Datagram(bencoded_r, tc.SERVER2_ADDR))
         related_query = self.querier.get_related_query(ping_r_in)
         assert related_query is None
         # response with wrong tid
         ping_r_msg_out = servers_msg_f.outgoing_ping_response(tc.CLIENT_NODE)
         bencoded_r = ping_r_msg_out.stamp('ZZ')
-        ping_r_in = clients_msg_f.incoming_msg(
-                        Datagram(bencoded_r, tc.SERVER_ADDR))
+        ping_r_in = clients_msg_f.incoming_msg(Datagram(bencoded_r, tc.SERVER_ADDR))
         related_query = self.querier.get_related_query(ping_r_in)
         assert related_query is None
         # Still no time to trigger timeouts
@@ -182,8 +174,7 @@ class TestQuerier(unittest.TestCase):
         timeout_queries = self.querier.get_timeout_queries()
         expected_msgs = msgs[:2] + msgs[4:]
         self.assertEqual(len(timeout_queries[1]), len(expected_msgs))
-        for related_query, expected_msg in zip(
-            timeout_queries[1], expected_msgs):
+        for related_query, expected_msg in zip(timeout_queries[1], expected_msgs):
             assert related_query is expected_msg
 
     def tearDown(self):

@@ -117,8 +117,10 @@ class Bucket(object):
 
 
 
-NUM_SBUCKETS = 160 # log_distance returns a number in range [-1,159]
+NUM_SBUCKETS = 160  # log_distance returns a number in range [-1,159]
 NUM_NODES = 8
+
+
 class RoutingTable(object):
     '''
     '''
@@ -130,7 +132,7 @@ class RoutingTable(object):
         self.sbuckets = [None] * NUM_SBUCKETS
         self.num_rnodes = 0
         self._ips_in_main = set()
-        self._ips_in_replacement = None #set() #bugfix
+        self._ips_in_replacement = None  # set() #bugfix
         return
 
     def get_sbucket(self, log_distance):
@@ -194,10 +196,10 @@ class RoutingTable(object):
 
     def print_table(self):
         header_format = '%6s %40s %10s %15s %5s %4s %8s'
-        data_format =   '%6d %40r %10s %15s %5d %4d %9.2f'
+        data_format = '%6d %40r %10s %15s %5d %4d %9.2f'
         header = header_format % (
             'bucket', 'id', 'version', 'ip', 'port', 'rtt', 'uptime(h)')
-        #TODO: format uptime as hh:mm
+        # TODO: format uptime as hh:mm
         thick_line = '=' * 95
         thin_line = '-' * 95
         logger.info("%s", thick_line)

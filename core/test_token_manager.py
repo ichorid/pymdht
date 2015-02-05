@@ -9,6 +9,7 @@ import token_manager
 
 IPS = ['1.1.1.1', '2.2.2.2']
 
+
 class TestTokenManager(unittest.TestCase):
 
     def setUp(self):

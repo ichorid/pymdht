@@ -29,7 +29,7 @@ test_data = [
     (-1, 'i-1e'),
     # lists
     ([], 'le'),
-    ([[[[]]]], 'lllleeee'), # maximum recursivity depht
+    ([[[[]]]], 'lllleeee'),  # maximum recursivity depht
     ([1, 2, 3], 'li1ei2ei3ee'),
     (['A', 'B', 'C'], 'l1:A1:B1:Ce'),
     (['A', 2, 'C'], 'l1:Ai2e1:Ce'),
@@ -39,7 +39,7 @@ test_data = [
     ({'key': 'a'}, 'd3:key1:ae'),
     ({'ZZZ': 12345}, 'd3:ZZZi12345ee'),
     # ordered dictionaries
-    ({'a':{'A':1, 'C':2, 'B':3}, 'b':2, 'z':3, 'c':[]},
+    ({'a': {'A': 1, 'C': 2, 'B': 3}, 'b': 2, 'z': 3, 'c': []},
      'd1:ad1:Ai1e1:Bi3e1:Ci2ee1:bi2e1:cle1:zi3ee'),
     # mixed types
     ({'A': [], 'B': {'B': [1], 'C': [], 'D':{}}, 'C': 9},
@@ -49,39 +49,39 @@ test_data = [
 test_data_encode_error = [
     (False, EncodeError),
     # Using no-string types in dict
-    ({1:1}, EncodeError),
-    ({None:1}, EncodeError),
-    ({(1,2):1}, EncodeError),
+    ({1: 1}, EncodeError),
+    ({None: 1}, EncodeError),
+    ({(1, 2): 1}, EncodeError),
     # There is no recursion limit when encoding
     ]
 
 test_data_decode_error = [
-    ('', DecodeError), # empty bencode
-    ('leEXTRA', DecodeError), # extra characters after bencode
-    ('xWHATEVER', DecodeError), # start with invalid character
-    ('dxe', DecodeError), # invalid special character
-    ('ixe', DecodeError), # invalid integer 
-    ('li2e', DecodeError), # list end missing
-    ('li2eee', DecodeError), # extra end
-    ('d3:KEYe', DecodeError), # value missing
+    ('', DecodeError),  # empty bencode
+    ('leEXTRA', DecodeError),  # extra characters after bencode
+    ('xWHATEVER', DecodeError),  # start with invalid character
+    ('dxe', DecodeError),  # invalid special character
+    ('ixe', DecodeError),  # invalid integer
+    ('li2e', DecodeError),  # list end missing
+    ('li2eee', DecodeError),  # extra end
+    ('d3:KEYe', DecodeError),  # value missing
     ('lllll', RecursionDepthError),
     ('d1:ad1:ad1:ad1:ad1:a', RecursionDepthError),
-    ('ddddd', DecodeError), # A dictionary is NOT a valid KEY
-    ('123', DecodeError), # string length withoug colom
-    ('123:', DecodeError), # end of data right after a colom
-    ('123:a', DecodeError), # string shorter than announced (end of data)
-    ('4:abcde', DecodeError), # string longer than announced (extra char)
-    ('5:abcdef', DecodeError), # string longer than announced (extra char)
-    ('l99:abc', DecodeError), # open list with shorter string than announced
-    ('d99:abc', DecodeError), # open dict with shorter string than announced
-    ('d2:ab99:ab', DecodeError), # open dict with shorter string than announced
-    ('d', DecodeError), # open dict (no close)
-    ('l', DecodeError), # open list (no close)
-    ('i', DecodeError), # open int (no close)
-    ('2', DecodeError), # open srt (no close)
-    ('2:', DecodeError), # open srt (no close)
-    ('2:a', DecodeError), # open srt (no close)
-    
+    ('ddddd', DecodeError),  # A dictionary is NOT a valid KEY
+    ('123', DecodeError),  # string length withoug colom
+    ('123:', DecodeError),  # end of data right after a colom
+    ('123:a', DecodeError),  # string shorter than announced (end of data)
+    ('4:abcde', DecodeError),  # string longer than announced (extra char)
+    ('5:abcdef', DecodeError),  # string longer than announced (extra char)
+    ('l99:abc', DecodeError),  # open list with shorter string than announced
+    ('d99:abc', DecodeError),  # open dict with shorter string than announced
+    ('d2:ab99:ab', DecodeError),  # open dict with shorter string than announced
+    ('d', DecodeError),  # open dict (no close)
+    ('l', DecodeError),  # open list (no close)
+    ('i', DecodeError),  # open int (no close)
+    ('2', DecodeError),  # open srt (no close)
+    ('2:', DecodeError),  # open srt (no close)
+    ('2:a', DecodeError),  # open srt (no close)
+
 #    ('i33z', DecodeError), # No ending for integer
 #    (None, DecodeError),
 #    (1, DecodeError),
@@ -93,7 +93,7 @@ def debug_print(test_num, input_, expected, output):
     input:    %s
     expected: %s
     output:   %s''' % (test_num, input_, expected, output))
-       
+
 
 class TestEncode(unittest.TestCase):
 
@@ -105,7 +105,7 @@ class TestEncode(unittest.TestCase):
             bencoded = None
             try:
                 bencoded = encode(data)
-            except(Exception), e:
+            except (Exception), e:
                 debug_print(i, data, expected, e)
                 raise
             if bencoded != expected:
@@ -119,15 +119,15 @@ class TestEncode(unittest.TestCase):
             try:
                 encode(data)
             except expected:
-                pass # Good. We got the expected exception.
+                pass  # Good. We got the expected exception.
             except (Exception), e:
                 debug_print(i, data, expected, e)
-                raise # Fail. We got some other exception.
+                raise  # Fail. We got some other exception.
             else:
                 debug_print(i, data, expected, 'NO EXCEPTION RAISED')
-                assert False # Fail. We got no exception at all.
+                assert False  # Fail. We got no exception at all.
 
-                
+
 class TestDecode(unittest.TestCase):
 
     def setUp(self):
@@ -165,4 +165,3 @@ class TestDecode(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    

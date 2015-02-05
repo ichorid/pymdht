@@ -22,6 +22,7 @@ MARK_INDEX = 2
 
 ANNOUNCE_REDUNDANCY = 3
 
+
 class _QueuedNode(object):
 
     def __init__(self, node_, log_distance, token):
@@ -31,6 +32,7 @@ class _QueuedNode(object):
 
     def __cmp__(self, other):
         return self.log_distance - other.log_distance
+
 
 class _LookupQueue(object):
 
@@ -52,8 +54,7 @@ class _LookupQueue(object):
 
     def bootstrap(self, rnodes, max_nodes):
         # Assume that the ips are not duplicated.
-        qnodes = [_QueuedNode(n, n.id.log_distance(
-                    self.info_hash), None)
+        qnodes = [_QueuedNode(n, n.id.log_distance(self.info_hash), None)
                   for n in rnodes]
         self._add_queued_qnodes(qnodes)
         return self._pop_nodes_to_query(max_nodes)
@@ -64,8 +65,7 @@ class _LookupQueue(object):
                             src_node.id.log_distance(self.info_hash),
                             token)
         self._add_responded_qnode(qnode)
-        qnodes = [_QueuedNode(n, n.id.log_distance(
-                    self.info_hash), None)
+        qnodes = [_QueuedNode(n, n.id.log_distance(self.info_hash), None)
                   for n in nodes]
         self._add_queued_qnodes(qnodes)
         return self._pop_nodes_to_query(max_nodes)
@@ -74,7 +74,7 @@ class _LookupQueue(object):
         return self._pop_nodes_to_query(max_nodes)
 
     on_error = on_timeout
-    
+
     def get_closest_responded_qnodes(self,
                                      num_nodes=ANNOUNCE_REDUNDANCY):
         closest_responded_qnodes = []
@@ -89,7 +89,7 @@ class _LookupQueue(object):
         if ip not in self.queried_ips:
             self.queried_ips.add(ip)
             return True
-        
+
     def _add_responded_qnode(self, qnode):
         self.responded_qnodes.append(qnode)
         self.responded_qnodes.sort()
@@ -112,12 +112,12 @@ class _LookupQueue(object):
             mark = self.responded_qnodes[MARK_INDEX].log_distance
         else:
             mark = identifier.ID_SIZE_BITS
-        nodes_to_query = [] 
+        nodes_to_query = []
         for _ in range(max_nodes):
             try:
                 qnode = self.queued_qnodes[0]
             except (IndexError):
-                break # no more queued nodes left
+                break  # no more queued nodes left
             if qnode.log_distance < mark:
                 self.queried_ips.add(qnode.node.ip)
                 nodes_to_query.append(qnode.node)
@@ -126,7 +126,7 @@ class _LookupQueue(object):
         self.last_query_ts = time.time()
         return nodes_to_query
 
-   
+
 class GetPeersLookup(object):
     """DO NOT use underscored variables, they are thread-unsafe.
     Variables without leading underscore are thread-safe.
@@ -147,7 +147,7 @@ class GetPeersLookup(object):
         self.lookup_id = lookup_id
         self.callback_f = callback_f
         self._lookup_queue = _LookupQueue(info_hash, 20)
-                                     
+
         self.info_hash = info_hash
         self._bt_port = bt_port
         self._lock = threading.RLock()
@@ -162,14 +162,14 @@ class GetPeersLookup(object):
         self._running = False
         self._slow_down = False
         self._msg_factory = message.OutgoingGetPeersQuery
-        
+
     def _get_max_nodes_to_query(self):
         if self._slow_down:
             return min(self.slowdown_alpha - self._num_parallel_queries,
                        self.slowdown_m)
         return min(self.normal_alpha - self._num_parallel_queries,
                    self.normal_m)
-    
+
     def start(self, bootstrap_rnodes):
         assert not self._running
         self._running = True
@@ -177,10 +177,9 @@ class GetPeersLookup(object):
                                                       self.bootstrap_alpha)
         queries_to_send = self._get_lookup_queries(nodes_to_query)
         return queries_to_send
-        
+
     def on_response_received(self, response_msg, node_):
-        logger.debug('response from %r\n%r' % (node_,
-                                                response_msg))
+        logger.debug('response from %r\n%r' % (node_, response_msg))
         self._num_parallel_queries -= 1
         self.num_responses += 1
         token = getattr(response_msg, 'token', None)
@@ -209,7 +208,7 @@ class GetPeersLookup(object):
         lookup_done = not self._num_parallel_queries
         return (queries_to_send, self._num_parallel_queries,
                 lookup_done)
-    
+
     def on_error_received(self, error_msg, node_addr):
         logger.debug('Got error from node addr: %r' % node_addr)
         self._num_parallel_queries -= 1
@@ -221,7 +220,7 @@ class GetPeersLookup(object):
         lookup_done = not self._num_parallel_queries
         return (queries_to_send, self._num_parallel_queries,
                 lookup_done)
-        
+
     def _get_lookup_queries(self, nodes):
         queries = []
         for node_ in nodes:
@@ -239,9 +238,9 @@ class GetPeersLookup(object):
             return [], False
         nodes_to_announce = self._lookup_queue.get_closest_responded_qnodes()
         announce_to_myself = False
-        #TODO: is is worth it to announce to self? The problem is that I don't
-        #know my own IP number. Maybe if 127.0.0.1 translates into "I (the
-        #node returning 127.0.0.1) am in the swarm".
+        # TODO: is is worth it to announce to self? The problem is that I don't
+        # know my own IP number. Maybe if 127.0.0.1 translates into "I (the
+        # node returning 127.0.0.1) am in the swarm".
         '''
         if len(nodes_to_announce) < ANNOUNCE_REDUNDANCY:
             announce_to_myself = True
@@ -255,16 +254,16 @@ class GetPeersLookup(object):
         for qnode in nodes_to_announce:
             logger.debug('announcing to %r' % qnode.node)
             query = message.OutgoingAnnouncePeerQuery(qnode.node,
-                self._my_id, self.info_hash,
-                self._bt_port, qnode.token)
+                                                      self._my_id, self.info_hash,
+                                                      self._bt_port, qnode.token)
             queries_to_send.append(query)
         return queries_to_send, announce_to_myself
 
     def get_closest_responded_hexids(self):
         return ['%r' % qnode.node.id for
                 qnode in self._lookup_queue.get_closest_responded_qnodes()]
-    
-            
+
+
 class MaintenanceLookup(GetPeersLookup):
 
     def __init__(self, my_id, target):
@@ -277,8 +276,8 @@ class MaintenanceLookup(GetPeersLookup):
         self.slowdown_alpha = 4
         self.slowdown_m = 1
         self._msg_factory = message.OutgoingFindNodeQuery
-            
-        
+
+
 class LookupManager(object):
 
     def __init__(self, my_id):

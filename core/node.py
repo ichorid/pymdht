@@ -7,6 +7,7 @@ import ptime as time
 import utils
 import identifier
 
+
 class Node(object):
 
     def __init__(self, addr, node_id=None, version=1, ns_node=False):
@@ -19,6 +20,7 @@ class Node(object):
 
     def get_id(self):
         return self._id
+
     def set_id(self, node_id):
         if self._id is None:
             self._id = node_id
@@ -37,12 +39,12 @@ class Node(object):
     @property
     def ip(self):
         return self._addr[0]
-    
+
     def __eq__(self, other):
         if self.addr == other.addr:
             try:
                 return self.id == other.id
-            except AttributeError: #self.id == None (id.bin_id fails)
+            except AttributeError:  # self.id == None (id.bin_id fails)
                 return self.id is None and other.id is None
         else:
             return False
@@ -57,9 +59,7 @@ class Node(object):
             return self.addr.__hash__()
 
     def __repr__(self):
-        return '<node: %26r %r (%s)>' % (self.addr,
-                                       self.id,
-                                       self.version)
+        return '<node: %26r %r (%s)>' % (self.addr, self.id, self.version)
 
     def distance(self, other):
         return self.id.distance(other.id)
@@ -80,6 +80,7 @@ RESPONSE = 'response'
 TIMEOUT = 'timeout'
 
 MAX_LAST_EVENTS = 10
+
 
 class RoutingNode(Node):
 
@@ -103,7 +104,7 @@ class RoutingNode(Node):
         self.in_quarantine = True
         self.last_seen = current_time
         self.bucket_insertion_ts = None
-        
+
     #def __repr__(self):
     #    return '<rnode: %r %r>' % (self.addr, self.id)
 
@@ -116,19 +117,18 @@ class RoutingNode(Node):
     def add_event(self, timestamp, event):
         self.last_events.append((timestamp, event))
         self.last_events = self.last_events[:MAX_LAST_EVENTS]
-    
+
     def timeouts_in_a_row(self, consider_queries=True):
         """Return number of timeouts in a row for this rnode."""
         result = 0
         for timestamp, event in reversed(self.last_events):
             if event == TIMEOUT:
                 result += 1
-            elif event == RESPONSE or \
-                     (consider_queries and event == QUERY):
+            elif event == RESPONSE or (consider_queries and event == QUERY):
                 return result
-        return result # all timeouts (and queries), or empty list
+        return result  # all timeouts (and queries), or empty list
 
-    
+
 class LookupNode(Node):
 
     def __init__(self, node_, target):

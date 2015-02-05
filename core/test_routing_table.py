@@ -19,13 +19,13 @@ logger = logging.getLogger('dht')
 MAX_RNODES = 2
 NODES_PER_BUCKET = 4
 
-class TestBucket(unittest.TestCase):
 
+class TestBucket(unittest.TestCase):
 
     def test_(self):
         self.b = Bucket(NODES_PER_BUCKET, set())
         # The bucket is empty
-        self.assertEqual(len(self.b) , 0)
+        self.assertEqual(len(self.b), 0)
         self.assertTrue(not self.b)
         # There is plenty of room
         for i in range (NODES_PER_BUCKET+1):
@@ -34,7 +34,7 @@ class TestBucket(unittest.TestCase):
         # A rnode is added
         self.b.add(tc.CLIENT_NODE.get_rnode(1))
         # The bucket has a rnode now
-        self.assertEqual(len(self.b) , 1)
+        self.assertEqual(len(self.b), 1)
         self.assertTrue(self.b)
         self.assertTrue(self.b.there_is_room(NODES_PER_BUCKET - 1))
         self.assertTrue(not self.b.there_is_room(NODES_PER_BUCKET))
@@ -44,7 +44,7 @@ class TestBucket(unittest.TestCase):
         # The bucket is empty again
         self.assertEqual(len(self.b), 0)
         self.assertTrue(self.b.there_is_room(NODES_PER_BUCKET))
-        
+
         # It is wrong to remove the rnode again
         self.assertRaises(Exception, self.b.remove, tc.CLIENT_NODE)
         # Or any not existing node, for that matter
@@ -75,8 +75,6 @@ class TestBucket(unittest.TestCase):
         # Complete coverage
         '%r' % self.b
 
-
-    
     def test(self):
         b1 = Bucket(2, set())
         self.assertTrue(b1.get_rnode(tc.CLIENT_NODE) is None)
@@ -113,7 +111,7 @@ class TestBucket(unittest.TestCase):
         self.assertEqual(b1.get_freshest_rnode(), tc.SERVER_NODE)
         self.assertEqual(b1.get_stalest_rnode(), tc.CLIENT_NODE)
         self.assertEqual(b1.sorted_by_rtt(), [tc.SERVER_NODE, tc.CLIENT_NODE])
-        
+
         self.assertRaises(AssertionError, b1.add, tc.CLIENT_NODE.get_rnode(1))
         b1.remove(tc.CLIENT_NODE)
         self.assertEqual(b1.get_rnode(tc.CLIENT_NODE), None)
@@ -127,25 +125,24 @@ class TestBucket(unittest.TestCase):
         self.assertEqual(b1.sorted_by_rtt(), [tc.SERVER_NODE])
 
         b2 = Bucket(2, set())
-        self.assertNotEqual(b1,b2)
+        self.assertNotEqual(b1, b2)
         self.assertTrue(b1 != b2)
 
         b3 = Bucket(2, set())
         b3.add(tc.CLIENT_NODE)
         self.assertNotEqual(b1, b3)
         self.assertTrue(b1 != b3)
-        
+
         b4 = Bucket(2, set())
         b4.add(tc.SERVER_NODE)
         self.assertEqual(b1, b4)
         self.assertFalse(b1 != b4)
-        
+
         b5 = Bucket(3, set())
         b3.add(tc.SERVER_NODE)
         self.assertNotEqual(b1, b5)
         self.assertTrue(b1 != b5)
 
-        
 
 class TestRoutingTable(unittest.TestCase):
 
@@ -169,7 +166,7 @@ class TestRoutingTable(unittest.TestCase):
         self.assertEqual(m_bucket.get_rnode(tc.SERVER_NODE), None)
         self.assertTrue(m_bucket.there_is_room(MAX_RNODES))
         self.assertTrue(not m_bucket.there_is_room(MAX_RNODES + 1))
-        self.assertEqual(self.rt.num_rnodes, 0) # empty
+        self.assertEqual(self.rt.num_rnodes, 0)  # empty
         self.assertEqual(self.rt.get_main_rnodes(), [])
 
         # Add server_node to main bucket
@@ -186,7 +183,7 @@ class TestRoutingTable(unittest.TestCase):
         sbucket = self.rt.get_sbucket(log_distance)
         m_bucket = sbucket.main
         r_bucket = sbucket.replacement
-        
+
         # Let's add a node to the same bucket
         new_node = node.Node(tc.SERVER_NODE.addr,
                              tc.SERVER_NODE.id.generate_close_id(1))
@@ -214,7 +211,7 @@ class TestRoutingTable(unittest.TestCase):
 
         sbucket = self.rt.get_sbucket(log_distance)
         m_bucket = sbucket.main
-        
+
         m_bucket.remove(new_node)
         print self.rt.get_main_rnodes()
         self.rt.num_rnodes -= 1
@@ -226,7 +223,7 @@ class TestRoutingTable(unittest.TestCase):
 
         self.assertEqual(self.rt.num_rnodes, 1)
         self.assertEqual(self.rt.get_main_rnodes(), [tc.SERVER_NODE])
-                     
+
         self.assertEqual(self.rt.get_closest_rnodes(ld_to_server, 8, True),
             [tc.SERVER_NODE])
     '''
@@ -269,7 +266,7 @@ class TestRoutingTable(unittest.TestCase):
     def test_get_closest_rnodes(self):
         log_distances = [2, 3, 5, 5, 6, 7, 7, 19]
         nodes = [node.Node(n.addr, tc.CLIENT_ID.generate_close_id(ld))
-                           for n, ld in zip(tc.NODES, log_distances)]
+                 for n, ld in zip(tc.NODES, log_distances)]
         for node_ in nodes:
             log_distance = self.my_node.distance(node_).log
             sbucket = self.rt.get_sbucket(log_distance)
@@ -277,28 +274,28 @@ class TestRoutingTable(unittest.TestCase):
             self.rt.num_rnodes += 1
 
         self.assertEqual(self.rt.get_closest_rnodes(0, 8, True),
-            nodes)
-        
+                         nodes)
+
         self.assertEqual(self.rt.get_closest_rnodes(0, 8, False),
-            [tc.CLIENT_NODE] + nodes[:7])
+                         [tc.CLIENT_NODE] + nodes[:7])
 
         self.assertEqual(self.rt.get_closest_rnodes(0,
-                                       max_rnodes=4,
-                                       exclude_myself=True),
-            nodes[:4])
+                                                    max_rnodes=4,
+                                                    exclude_myself=True),
+                         nodes[:4])
         self.assertEqual(self.rt.get_closest_rnodes(0,
-                                       max_rnodes=4,
-                                       exclude_myself=False),
-            [tc.CLIENT_NODE] + nodes[:3])
+                                                    max_rnodes=4,
+                                                    exclude_myself=False),
+                         [tc.CLIENT_NODE] + nodes[:3])
 
         self.assertEqual(self.rt.get_closest_rnodes(0,
-                                       max_rnodes=20,
-                                       exclude_myself=True),
-            nodes)
+                                                    max_rnodes=20,
+                                                    exclude_myself=True),
+                         nodes)
         self.assertEqual(self.rt.get_closest_rnodes(0,
-                                       max_rnodes=20,
-                                       exclude_myself=False),
-            [tc.CLIENT_NODE] + nodes)
+                                                    max_rnodes=20,
+                                                    exclude_myself=False),
+                         [tc.CLIENT_NODE] + nodes)
 
         ld_to_7 = tc.CLIENT_NODE.distance(nodes[7]).log
         closest_nodes = self.rt.get_closest_rnodes(ld_to_7, 8,
@@ -322,12 +319,12 @@ class TestRoutingTable(unittest.TestCase):
         self.assertRaises(IndexError, self.rt.get_sbucket, 161)
 
     def test_complete_coverage(self):
-        #TODO: ips_in_table
+        # TODO: ips_in_table
         self.assertEqual(self.rt.get_closest_rnodes(76, 8, False), [tc.CLIENT_NODE])
         log_distance = self.my_node.distance(tc.SERVER_NODE).log
         str(self.rt.get_sbucket(log_distance).main)
         repr(self.rt)
-        
+
         self.assertTrue(Bucket(1, set()) != Bucket(2, set()))
 
         buckets = [Bucket(2, set()), Bucket(2, set())]
@@ -343,7 +340,7 @@ class TestRoutingTable(unittest.TestCase):
         # Dangerous!!!
         stalest_rnode.last_seen = time.time()
         self.assertEqual(buckets[0].get_freshest_rnode(), tc.CLIENT_NODE)
-            
+
         self.assertEqual(self.rt.find_next_bucket_with_room_index(tc.CLIENT_NODE), 0)
         self.assertEqual(self.rt.find_next_bucket_with_room_index(log_distance=6), 7)
         self.assertEqual(self.rt.find_next_bucket_with_room_index(log_distance=106), 107)

@@ -15,7 +15,7 @@ logger = logging.getLogger('dht')
 
 VALIDITY_PERIOD = 30
 CLEANUP_COUNTER = 5
-KEYS = ('0','1','2')
+KEYS = ('0', '1', '2')
 PEERS = [('1.2.3.4', i) for i in range(0, 10)]
 
 
@@ -57,12 +57,12 @@ class TestTracker(unittest.TestCase):
         # The expired entries are no more
         self.assertEqual(self.t.num_keys, 1)
         self.assertEqual(self.t.num_peers, 1)
-        
+
     def test_get_nonempty_key(self):
         self.t.put(KEYS[0], PEERS[0])
         print self.t._tracker_dict
         self.assertEqual(self.t.get(KEYS[0]), [PEERS[0]])
-        
+
     def test_get_expired_value(self):
         self.t.put(KEYS[0], PEERS[0])
         self.assertEqual(self.t.num_keys, 1)
@@ -79,7 +79,7 @@ class TestTracker(unittest.TestCase):
         # 20
         self.t.put(KEYS[0], PEERS[0])
         time.sleep(20)
-        # 40 
+        # 40
         self.t.put(KEYS[0], PEERS[1])
         self.assertEqual(self.t.get(KEYS[0]), PEERS[0:2])
         time.sleep(10)
@@ -100,66 +100,65 @@ class TestTracker(unittest.TestCase):
         time.sleep(0)
         self.assertEqual(self.t.num_peers, 0)
 
-        self.t.put(1,1)
+        self.t.put(1, 1)
         self.assertEqual(self.t.num_peers, 1)
 
         time.sleep(25)
         self.assertEqual(self.t.num_peers, 1)
 
-        self.t.put(2,2)
+        self.t.put(2, 2)
         self.assertEqual(self.t.num_peers, 2)
 
         time.sleep(1)
         self.assertEqual(self.t.num_peers, 2)
 
-        self.t.put(3,3)
+        self.t.put(3, 3)
         self.assertEqual(self.t.num_peers, 3)
 
         time.sleep(1)
         self.assertEqual(self.t.num_peers, 3)
 
-        self.t.put(4,4)
+        self.t.put(4, 4)
         self.assertEqual(self.t.num_peers, 4)
 
         time.sleep(3)
         self.assertEqual(self.t.num_peers, 4)
 
-        self.t.put(5,5)
+        self.t.put(5, 5)
         # cleaning... 1 out
         self.assertEqual(self.t.num_peers, 4)
 
         time.sleep(.0)
         self.assertEqual(self.t.num_peers, 4)
 
-        self.t.put(6,6)
+        self.t.put(6, 6)
         self.assertEqual(self.t.num_peers, 5)
 
         time.sleep(.00)
         self.assertEqual(self.t.num_peers, 5)
 
-        self.t.put(7,7)
+        self.t.put(7, 7)
         self.assertEqual(self.t.num_peers, 6)
 
         time.sleep(20)
         self.assertEqual(self.t.num_peers, 6)
 
-        self.t.put(8,8)
+        self.t.put(8, 8)
         self.assertEqual(self.t.num_peers, 7)
 
         time.sleep(.00)
         self.assertEqual(self.t.num_peers, 7)
 
-        self.t.put(9,9)
+        self.t.put(9, 9)
         self.assertEqual(self.t.num_peers, 8)
 
         time.sleep(10)
         self.assertEqual(self.t.num_peers, 8)
 
-        self.t.put(0,0)
+        self.t.put(0, 0)
         # cleaning ... 2,3,4,5,6,7 out
         self.assertEqual(self.t.num_peers, 3)
 
-            
     def tearDown(self):
         time.normal_mode()
 

@@ -8,6 +8,7 @@ import ptime as actual_time
 import socket as actual_socket
 import threading
 
+
 class _MockTime(object):
 
     def __init__(self):
@@ -26,7 +27,7 @@ class _MockTime(object):
     def unmock(self):
         assert self._valid
         self._valid = False
- 
+
 
 class MockTimeoutSocket(object):
 
@@ -56,8 +57,7 @@ class MockTimeoutSocket(object):
                     break
         return result
 
-    recvfrom = sendto 
-    
+    recvfrom = sendto
 
     ####
     # Methods to be used by the testing module
@@ -66,7 +66,7 @@ class MockTimeoutSocket(object):
         self.action = (self._data_sent, data)
         while self.action:
             pass
-    
+
     def data_received(self, data, addr):
         self.action = (self._data_received, data, addr)
         while self.action:
@@ -76,7 +76,6 @@ class MockTimeoutSocket(object):
         self.action = (self._raise_timeout, e)
         while self.action:
             pass
-
 
     def _data_sent(self, data):
         return len(data)
@@ -91,6 +90,3 @@ class MockTimeoutSocket(object):
         pass
     settimeout = setsockopt
     bind = setsockopt
-    
-
-    

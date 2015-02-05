@@ -15,6 +15,7 @@ logger = logging.getLogger('dht')
 
 MAINTENANCE_DELAY = 8
 
+
 class RoutingManager(object):
     """
     Create a routing table (using routing\_table.RoutingTable) for
@@ -30,7 +31,7 @@ class RoutingManager(object):
         self.table = routing_table.RoutingTable(my_node, [8,]*160)
         # This is just for testing:
         self.maintenance_counter = 0
-        
+
     def do_maintenance(self):
         """
         Return a three-element tuple: (1) the time-stamp when
@@ -60,20 +61,20 @@ class RoutingManager(object):
             maintenance_lookup_target = None
         return (maintenance_delay, queries_to_send,
                 maintenance_lookup_target)
-        
+
     def on_query_received(self, node_):
         '''
         Return a list of message.OutgoingQueryBase objects ready to be sent.
 
         This method will be called for every query received.
-        
+
         Return None when nothing to do
         Return a list of queries when queries need to be sent (the queries
         will be sent out by the caller)
         '''
         queries_to_send = []
         return queries_to_send
-            
+
     def on_response_received(self, node_, rtt, nodes):
         """
         Return a list of message.OutgoingQueryBase objects ready to be sent.
@@ -87,8 +88,8 @@ class RoutingManager(object):
         sbucket.main.add(rnode)
         queries_to_send = []
         return queries_to_send
-        
-    def on_error_received(self, node_): 
+
+    def on_error_received(self, node_):
         """
         Return a list of message.OutgoingQueryBase objects ready to be sent.
 
@@ -96,7 +97,7 @@ class RoutingManager(object):
         """
         queries_to_send = []
         return queries_to_send
-    
+
     def on_timeout(self, node_):
         """
         Return a list of message.OutgoingQueryBase objects ready to be sent.
@@ -108,7 +109,7 @@ class RoutingManager(object):
         sbucket.main.remove(node_)
         queries_to_send = []
         return queries_to_send
-            
+
     def get_closest_rnodes(self, log_distance, num_nodes, exclude_myself):
         return self.table.get_closest_rnodes(log_distance,
                                              num_nodes, exclude_myself)

@@ -18,6 +18,7 @@ RANDOM_ADDR2 = ('127.12.1.1', 3708)
 
 CONF_PATH = 'test_logs'
 
+
 class TestBootstrap(unittest.TestCase):
 
     def setUp(self):
@@ -77,7 +78,7 @@ class TestBootstrap(unittest.TestCase):
         b.report_unreachable(RANDOM_ADDR)
         assert b.unstable_len == initial_unstable_len - 2
         assert RANDOM_ADDR not in b.get_sample_unstable_addrs(b.unstable_len)
-        
+
     def test_report_short(self):
         b = bootstrap.OverlayBootstrapper(CONF_PATH, False)
         initial_unstable_len = b.unstable_len

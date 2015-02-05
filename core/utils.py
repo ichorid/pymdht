@@ -11,15 +11,17 @@ import node
 
 logger = logging.getLogger('dht')
 
+
 class AddrError(Exception):
     pass
 
+
 class IP6Addr(AddrError):
     pass
-#TODO2: IPv6 support
+# TODO2: IPv6 support
 
 
-#TODO2: move binary functions from identifier
+# TODO2: move binary functions from identifier
 
 def compact_port(port):
     return ''.join(
@@ -29,6 +31,7 @@ def compact_port(port):
 def uncompact_port(c_port_net):
     return ord(bin_str[0]) * 256 + ord(bin_str[1])
 '''
+
 
 def compact_addr(addr):
     return socket.inet_aton(addr[0]) + compact_port(addr[1])
@@ -42,6 +45,7 @@ def uncompact_addr(c_addr):
 '''
 compact_peer = compact_addr
 
+
 def get_subnet(addr):
     return socket.inet_aton(addr[0])[:3]
 
@@ -53,13 +57,12 @@ def get_open_file(filename, mode='r'):
     # Arno, 2012-05-25: py2exe support
     if hasattr(sys, "frozen"):
         logger.info("pymdht: utils.py py2exe: Frozen mode")
-        installdir = os.path.dirname(unicode(
-                sys.executable,sys.getfilesystemencoding()))
+        installdir = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding()))
         if sys.platform == "darwin":
             installdir = installdir.replace("MacOS","Resources")
         abs_filename = os.path.join(installdir, "Tribler", "Core",
-                         "DecentralizedTracking", "pymdht", "core",
-                         filename)
+                                    "DecentralizedTracking", "pymdht", "core",
+                                    filename)
         logger.info("pymdht: utils.py py2exe: %s %s", filename, abs_filename)
     try:
         return open(abs_filename, mode)

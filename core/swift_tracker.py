@@ -53,6 +53,7 @@ TOAST_EACH = 20
 
 # TODO: agree on a clear protocol between swift and pymdht
 
+
 class SwiftTracker(threading.Thread):
 
     def __init__(self, pymdht, swift_port):
@@ -103,16 +104,16 @@ class SwiftTracker(threading.Thread):
             if peer not in channel.peers:
                 channel.peers.add(peer)
                 reply.extend([chr(PEX_RES),
-                socket.inet_aton(peer[0]),
-                chr(peer[1] >> 8),
-                chr(peer[1] % 256)])
+                              socket.inet_aton(peer[0]),
+                              chr(peer[1] >> 8),
+                              chr(peer[1] % 256)])
         if len(reply) > 1:
             reply = ''.join(reply)
             self.socket.sendto(reply, channel.remote_addr)
         # droid.log('DHT got %d peers' % len(channel.peers))
         print 'got %d peer' % len(peers), peers
 
-    def handle(self, data , addr):
+    def handle(self, data, addr):
         # droid.log("New connection")
         if data == "KILL_DHT":
             return True  # stop DHT
