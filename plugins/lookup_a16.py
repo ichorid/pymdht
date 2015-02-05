@@ -5,8 +5,7 @@
 import sys
 import threading
 import logging
-
-import os, sys
+import os
 this_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.join(this_dir, '..')
 sys.path.append(root_dir)

@@ -1,8 +1,6 @@
 import logging
 
 import core.message as message
-from core.node import Node
-import core.ptime as time
 
 logger = logging.getLogger('dht')
 

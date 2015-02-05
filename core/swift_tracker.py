@@ -2,17 +2,13 @@
 # See LICENSE.txt for more information
 
 # import android
-import os
 import random
 import socket
-import sys
-import time
 import threading
-import logging
 
 
 # from core.pymdht import Pymdht
-from identifier import Id, RandomId
+from identifier import Id
 # from core.node import Node
 # import plugins.routing_nice_rtt as routing_m_mod
 # import plugins.lookup_a4 as lookup_m_mod

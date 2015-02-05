@@ -14,7 +14,6 @@ sys.path.append(root_dir)
 
 import core.ptime as time
 import core.identifier as identifier
-import core.message as message
 from core.node import Node
 
 sys.path.pop()

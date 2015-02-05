@@ -13,7 +13,6 @@ This module intends to implement the routing policy specified in NICE RTT:
 
 from operator import attrgetter
 import random
-import heapq
 
 import logging
 
@@ -31,9 +30,7 @@ sys.path.append(root_dir)
 
 import core.ptime as time
 import core.identifier as identifier
-import core.message as message
 import core.node as node
-from core.node import Node, RoutingNode
 from core.routing_table import RoutingTable
 
 sys.path.pop()

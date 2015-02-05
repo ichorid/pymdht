@@ -14,13 +14,11 @@ sanitized.
 
 """
 
-import sys
-
 import logging
 
 import ptime as time
 import bencode
-from identifier import Id, ID_SIZE_BYTES, IdError
+from identifier import Id, IdError
 from node import Node
 import message_tools as mt
 

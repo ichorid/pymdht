@@ -13,19 +13,13 @@ implementations of routing and lookup managers in parallel.
 
 """
 
-import sys
 import ptime as time
-import datetime
-import os
-import cPickle
 
-import logging, logging_conf
+import logging
 
 import identifier
-from identifier import Id
 import message
 from querier import Querier
-from message import QUERY, RESPONSE, ERROR
 from node import Node
 import responder
 import bootstrap

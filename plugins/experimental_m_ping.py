@@ -1,9 +1,7 @@
 import logging
 
 import core.message as message
-from core.node import Node
 import core.ptime as time
-import pickle
 
 logger = logging.getLogger('dht')
 

@@ -5,11 +5,9 @@
 """
 This module is responsible for the routing table management.
 """
-import ptime as time
 import logging
 import test_const as tc
 import routing_table
-import message
 
 logger = logging.getLogger('dht')
 

@@ -2,7 +2,6 @@
 # Released under GNU LGPL 2.1
 # See LICENSE.txt for more information
 
-import sys
 import threading
 import logging
 try:

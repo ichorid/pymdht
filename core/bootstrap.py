@@ -19,14 +19,10 @@ This file will contain, at most, an IP address per /24 subnet.
 """
 
 import os
-import sys
 import random
 import logging
 
 import ptime as time
-import identifier
-import message
-import node
 import utils
 
 logger = logging.getLogger('dht')

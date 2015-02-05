@@ -9,8 +9,7 @@ host processing too many messages from a single host.
 """
 
 import ptime as time
-import collections
-import logging, logging_conf
+import logging
 
 logger = logging.getLogger('dht')
 

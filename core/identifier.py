@@ -10,7 +10,6 @@ This module provides the Id object and necessary tools.
 #int(a, 16) hex>int
 #hex() int>hex
 
-import sys
 import random
 import base64
 

@@ -5,7 +5,6 @@
 import ptime as time
 
 import utils
-import identifier
 
 
 class Node(object):

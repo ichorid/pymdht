@@ -3,7 +3,7 @@ This is the server part of the node, where queries are parsed and responses
 created.
 
 """
-import logging, logging_conf
+import logging
 
 import message
 import tracker

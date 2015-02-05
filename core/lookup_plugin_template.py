@@ -3,8 +3,6 @@
 # See LICENSE.txt for more information
 
 import ptime as time
-import message
-import querier
 
 import logging
 

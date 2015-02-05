@@ -12,8 +12,6 @@ Find usage examples in server_dht.py and interactive_dht.py.
 
 """
 
-import sys
-import os
 import ptime as time
 
 import minitwisted

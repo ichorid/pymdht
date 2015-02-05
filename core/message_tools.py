@@ -2,13 +2,10 @@
 # Released under GNU LGPL 2.1
 # See LICENSE.txt for more information
 
-import sys
-import socket
 from socket import inet_ntoa, inet_aton
 import logging
 
-import bencode
-from identifier import Id, ID_SIZE_BYTES, IdError
+from identifier import Id, ID_SIZE_BYTES
 from node import Node
 
 
