@@ -36,7 +36,7 @@ class Cache(object):
         self.cached_lookups = []
 
     def put_cached_lookup(self, cached_lookup):
-        # first remove expired chached lookups
+        # first remove expired cached lookups
         for i in range(len(self.cached_lookups)):
             if time.time() > (self.cached_lookups[i].start_ts +
                               self.validity_time):
