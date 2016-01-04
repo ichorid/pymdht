@@ -64,4 +64,4 @@ def get_open_file(filename, mode='r'):
     try:
         return open(abs_filename, mode)
     except (IOError):
-        logger.execption('Ignoring this file...')
+        logger.exception('Ignoring this file...')
