@@ -46,22 +46,28 @@ def get_subnet(addr):
     return socket.inet_aton(addr[0])[:3]
 
 
+def is_frozen():
+    """
+    Return whether we are running in a frozen environment
+    """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        return False
+    return True
+
+
 def get_open_file(filename, mode='r'):
     data_path = os.path.dirname(node.__file__)
     abs_filename = os.path.join(data_path, filename)
 
-    # Arno, 2012-05-25: py2exe support
-    if hasattr(sys, "frozen"):
-        logger.info("pymdht: utils.py py2exe: Frozen mode")
-        installdir = os.path.dirname(unicode(
-                sys.executable,sys.getfilesystemencoding()))
-        if sys.platform == "darwin":
-            installdir = installdir.replace("MacOS","Resources")
-        abs_filename = os.path.join(installdir, "Tribler", "Core",
-                         "DecentralizedTracking", "pymdht", "core",
-                         filename)
-        logger.info("pymdht: utils.py py2exe: %s %s", filename, abs_filename)
+    # Martijn, 2016-11-22: PyInstaller support
+    if is_frozen():
+        abs_filename = os.path.join(sys._MEIPASS, "tribler_source", "Tribler", "Core",
+                                    "DecentralizedTracking", "pymdht", "core", filename)
+        logger.info("pymdht: utils.py pyinstaller: %s %s", filename, abs_filename)
     try:
         return open(abs_filename, mode)
-    except (IOError):
+    except IOError:
         logger.exception('Ignoring this file...')

@@ -13,30 +13,17 @@ This module intends to implement the routing policy specified in NICE RTT:
 
 from operator import attrgetter
 import random
-import heapq
 
 import logging
 
-import os, sys
-this_dir = os.path.dirname(os.path.abspath(__file__))
-root_dir = os.path.join(this_dir, '..')
 
-# Arno, 2012-05-25: Apparently .. stuff don't work in py2exe where all
-# code is in library.zip and the this_dir is e.g
-# D:\pkgs\t599c\library.zip\Tribler\Core\DecentralizedTracking\pymdht\plugins
-parent_dir = os.path.dirname(this_dir)
+import pymdht.core.ptime as time
+import pymdht.core.identifier as identifier
+import pymdht.core.message as message
+import pymdht.core.node as node
+from pymdht.core.node import Node, RoutingNode
+from pymdht.core.routing_table import RoutingTable
 
-sys.path.append(parent_dir)
-sys.path.append(root_dir)
-
-import core.ptime as time
-import core.identifier as identifier
-import core.message as message
-import core.node as node
-from core.node import Node, RoutingNode
-from core.routing_table import RoutingTable
-
-sys.path.pop()
 
 logger = logging.getLogger('dht')
 

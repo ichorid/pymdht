@@ -2,22 +2,15 @@
 # Released under GNU LGPL 2.1
 # See LICENSE.txt for more information
 
-import sys
 import threading
 import logging
 from operator import attrgetter
 
-import os, sys
-this_dir = os.path.dirname(os.path.abspath(__file__))
-root_dir = os.path.join(this_dir, '..')
-sys.path.append(root_dir)
+import pymdht.core.ptime as time
+import pymdht.core.identifier as identifier
+import pymdht.core.message as message
+from pymdht.core.node import Node
 
-import core.ptime as time
-import core.identifier as identifier
-import core.message as message
-from core.node import Node
-
-sys.path.pop()
 
 logger = logging.getLogger('dht')
 
