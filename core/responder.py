@@ -46,7 +46,7 @@ class Responder(object):
             #first in the bucket.
             peers = self._tracker.get(msg.info_hash)
             if peers:
-                logger.debug('RESPONDING with PEERS:\n%r' % peers)
+                logger.debug('RESPONDING with PEERS: %r' % peers)
             return self.msg_f.outgoing_get_peers_response(
                 msg.src_node, token, nodes=rnodes, peers=peers)
         elif msg.query == message.ANNOUNCE_PEER:

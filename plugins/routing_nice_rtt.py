@@ -111,8 +111,7 @@ class RoutingManager(object):
             log_distance = lookup_target.distance(self.my_node.id).log
             nodes = self.get_closest_rnodes(log_distance, 0, True)
         return lookup_target, nodes
-        
-                
+
     def do_maintenance(self):
         queries_to_send = []
         maintenance_lookup = None

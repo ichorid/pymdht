@@ -63,9 +63,9 @@ class Querier(object):
         for i, query in enumerate(queries):
             msg = query
             tid = self._next_tid()
-            logger.debug('registering query %d to node: %r\n%r' % (i,
-                                                                   query.dst_node,
-                                                                   msg))
+            logger.debug('registering query %d to node: %r msg: %r' % (i,
+                                                                    query.dst_node,
+                                                                    msg))
             self._timeouts.append((timeout_ts, msg))
             # if node is not in the dictionary, it will create an empty list
             self._pending.setdefault(query.dst_node.addr, []).append(msg)
@@ -84,14 +84,14 @@ class Querier(object):
         if response_msg.type == message.RESPONSE:
             logger.debug('response received: %s' % repr(response_msg))
         elif response_msg.type == message.ERROR:
-            logger.warning('Error message received:\n%s\nSource: %s',
+            logger.warning('Error message received %s Source: %s',
                            `response_msg`,
                            `response_msg.src_addr`)
         else:
             raise Exception, 'response_msg must be response or error'
         related_query = self._find_related_query(response_msg)
         if not related_query:
-            logger.warning('No query for this response\n%s\nsource: %s' % (
+            logger.warning('No query for this response %s source: %s' % (
                     response_msg, response_msg.src_addr))
         return related_query
 
