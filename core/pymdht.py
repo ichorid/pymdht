@@ -99,15 +99,15 @@ class Pymdht:
         The info_hash must be an identifier.Id object.
 
         The callback_f must expect two parameters (lookup_id and list of
-        peeers). When peers are discovered, the callback is called with a list
-        of peers as paramenter.  The list of peers is a list of addresses
+        peers). When peers are discovered, the callback is called with a list
+        of peers as parameter.  The list of peers is a list of addresses
         (<IPv4, port> pairs).
 
         The bt_port parameter is optional. When non-zero, ANNOUNCE messages
         will be send using the provided port number.
 
         Notice that the callback can be fired even before this call ends. Your
-        callback needs to be ready to get peers BEFORE calling this fuction.
+        callback needs to be ready to get peers BEFORE calling this function.
 
         """
         # logger.critical("pymdht.get_peers: callback: %r" % (callback_f))
