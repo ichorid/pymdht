@@ -212,21 +212,23 @@ class Controller:
         datagrams_to_send = []
         try:
             msg = self.msg_f.incoming_msg(datagram)
-            
+            logger.debug("Incomming dht message: %s", repr(msg))
         except(message.MsgError):
             # ignore message
+            logger.exception("Error while decoding dht message")
             return self._next_main_loop_call_ts, datagrams_to_send
 
         if msg.type == message.QUERY:
            
             if msg.src_node.id == self._my_id:
-                logger.debug('Got a msg from myself:\n%r', msg)
+                logger.debug('Got a msg from myself: %r', msg)
                 return self._next_main_loop_call_ts, datagrams_to_send
             #zinat: inform experimental_module
             exp_queries_to_send = self._experimental_m.on_query_received(msg)
             
             response_msg = self._responder.get_response(msg)
             if response_msg:
+                logger.debug("Sending out response %s", repr(response_msg))
                 bencoded_response = response_msg.stamp(msg.tid)
                 datagrams_to_send.append(
                     message.Datagram(bencoded_response, addr))
@@ -299,6 +301,7 @@ class Controller:
                         callback_f(lookup_id, None, msg.src_node)
                 if lookup_done:
                     datagrams = self._announce(related_query.lookup_obj)
+                    logger.debug("Sending out message %s", repr(datagrams))
                     datagrams_to_send.extend(datagrams)
             # maintenance related tasks
             maintenance_queries_to_send = \

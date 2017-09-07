@@ -55,6 +55,7 @@ TARGET = 'target' # Target's nodeID (find_node)
 INFO_HASH = 'info_hash' # Torrent's info_hash (get_peers and announce)
 PORT = 'port'     # BitTorrent port (announce)
 TOKEN = 'token'   # Token (announce)
+IMPLIED_PORT = 'implied_port' # ignore port argument, use socket port
 
 # Valid keys for RESPONSE
 ID = 'id'         # Node's nodeID (all replies)
@@ -329,7 +330,7 @@ class IncomingMsg(object):
             raise
         except:
             logger.warning(
-                'This bencoded message is broken:\n%s' % repr(bencoded_msg))
+                'This bencoded message is broken: %s' % repr(bencoded_msg))
             raise MsgError, 'Invalid message'
 
     def __repr__(self):
@@ -416,9 +417,11 @@ class IncomingMsg(object):
             self.info_hash = self._get_id(ARGS, INFO_HASH)
             if self.query == ANNOUNCE_PEER:
                 self.bt_port = self._get_int(ARGS, PORT)
-                if not MIN_BT_PORT <= self.bt_port <= MAX_BT_PORT:
-                    raise MsgError, 'announcing to %d. Out of range' % (
-                        self.bt_port)
+                if self._get_value(ARGS, IMPLIED_PORT, True) is not None and self._get_int(ARGS, IMPLIED_PORT) != 0:
+                    self.bt_port = self.src_node.addr[1]
+                elif not MIN_BT_PORT <= self.bt_port <= MAX_BT_PORT:
+                    raise MsgError, 'announcing to %d. Out of range. Msg %s' % (
+                        self.bt_port, repr(self))
                 self.token = self._get_str(ARGS, TOKEN)
         elif self.query == FIND_NODE:
             # target
