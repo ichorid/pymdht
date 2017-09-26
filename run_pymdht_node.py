@@ -100,15 +100,6 @@ def main2(options, args):
         # Just loop for ever
         while 1:
             time.sleep(10)
-    elif options.gui:
-        import wx
-        import ui.gui
-        app = wx.PySimpleApp()
-        frame = ui.gui.Interactive_GUI(
-            None, "Interactive Look@MDHT", None,(1440,900),
-            dht, logs_path)
-        frame.Show(True)
-        app.MainLoop()
     elif options.telnet_port:
         import ui.telnet
         telnet_ui = ui.telnet.Telnet(dht, options.telnet_port)
