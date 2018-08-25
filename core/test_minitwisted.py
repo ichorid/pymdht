@@ -9,7 +9,7 @@ import sys
 import threading
 import socket
 
-import unittest
+from twisted.trial import unittest
 
 import logging_conf
 import ptime as time

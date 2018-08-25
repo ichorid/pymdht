@@ -4,7 +4,7 @@
 
 import ptime as time
 
-import unittest
+from twisted.trial import unittest
 
 import test_const as tc
 

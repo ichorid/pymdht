@@ -5,7 +5,7 @@
 import ptime as time
 import logging, logging_conf
 
-import unittest
+from twisted.trial import unittest
 
 import test_const as tc
 

@@ -1,7 +1,7 @@
 # Released under GNU LGPL 2.1
 # See LICENSE.txt for more information
 
-import unittest
+from twisted.trial import unittest
 
 import ptime as time
 import bootstrap

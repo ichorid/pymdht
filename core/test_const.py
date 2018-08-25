@@ -9,7 +9,7 @@ logs_level = logging.DEBUG
 logging_conf.setup(logs_path, logs_level)
 '''
 
-import unittest
+from twisted.trial import unittest
 import identifier
 from identifier import Id, ID_SIZE_BITS, BITS_PER_BYTE
 import node

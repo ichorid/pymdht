@@ -3,7 +3,7 @@
 # See LICENSE.txt for more information
 
 import random
-import unittest
+from twisted.trial import unittest
 
 import logging, logging_conf
 

@@ -2,11 +2,11 @@
 # Released under GNU LGPL 2.1
 # See LICENSE.txt for more information
 
-import unittest
+from twisted.trial import unittest
 
 import cStringIO
 import logging, logging_conf
-import unittest
+from twisted.trial import unittest
 
 from bencode import *
 
