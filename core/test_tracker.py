@@ -22,6 +22,7 @@ PEERS = [('1.2.3.4', i) for i in range(0, 10)]
 class TestTracker(unittest.TestCase):
 
     def setUp(self):
+        super(TestTracker, self).setUp()
         time.mock_mode()
         self.t = tracker.Tracker(VALIDITY_PERIOD, CLEANUP_COUNTER)
 
@@ -162,6 +163,7 @@ class TestTracker(unittest.TestCase):
             
     def tearDown(self):
         time.normal_mode()
+        super(TestTracker, self).tearDown()
 
 
 if __name__ == '__main__':

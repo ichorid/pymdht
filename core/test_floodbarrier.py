@@ -18,6 +18,7 @@ logger = logging.getLogger('dht')
 class TestFloodBarrier(unittest.TestCase):
 
     def setUp(self):
+        super(TestFloodBarrier, self).setUp()
         time.mock_mode()
 
     def test(self):
@@ -61,6 +62,7 @@ class TestFloodBarrier(unittest.TestCase):
         
     def tearDown(self):
         time.normal_mode()
+        super(TestFloodBarrier, self).tearDown()
 
 
 if __name__ == '__main__':

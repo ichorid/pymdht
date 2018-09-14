@@ -45,6 +45,7 @@ servers_msg_f = message.MsgFactory(VERSION_LABEL, tc.SERVER_ID)
 class TestQuerier(unittest.TestCase):
 
     def setUp(self):
+        super(TestQuerier, self).setUp()
         time.mock_mode()
         self.querier = Querier()#tc.CLIENT_ID)
 
@@ -188,6 +189,7 @@ class TestQuerier(unittest.TestCase):
 
     def tearDown(self):
         time.normal_mode()
+        super(TestQuerier, self).tearDown()
 
 
 if __name__ == '__main__':

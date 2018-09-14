@@ -63,6 +63,7 @@ class TestMinitwisted(unittest.TestCase):
         raise CrashError, 'Crash testing'
 
     def setUp(self):
+        super(TestMinitwisted, self).setUp()
         time.mock_mode()
         self.main_loop_call_counter = 0
         self.callback_values = []
@@ -155,6 +156,7 @@ class TestMinitwisted(unittest.TestCase):
     def tearDown(self):
         #self.reactor.stop() >> reactor is not really running
         time.normal_mode()
+        super(TestMinitwisted, self).tearDown()
 
 
 class TestMinitwistedRealThreading(unittest.TestCase):
@@ -200,6 +202,7 @@ class TestSend(unittest.TestCase):
         raise CrashError, 'Crash testing'
 
     def setUp(self):
+        super(TestSend, self).setUp()
         self.main_loop_call_counter = 0
         self.callback_values = []
         self.datagrams_received = []
@@ -271,6 +274,7 @@ class TestSocketError(unittest.TestCase):
         return
     
     def setUp(self):
+        super(TestSocketError, self).setUp()
         self.main_loop_call_counter = 0
         self.callback_values = []
         self.datagrams_received = []
@@ -287,7 +291,8 @@ class TestSocketError(unittest.TestCase):
         self.reactor.s.raise_error_on_next_recvfrom()
         self.reactor.run_one_step()
 
-    def teardown(self):
+    def tearDown(self):
+        super(TestSocketError, self).tearDown()
         return
 
 
@@ -343,6 +348,7 @@ class _TestSocketErrors():#unittest.TestCase):
         return time.time() + 100, []
 
     def setUp(self):
+        #super(_TestSocketErrors, self).setUp()
         self.main_loop_send_called = False
         self.callback_fired = False
         self.r = ThreadedReactor(self._main_loop_send, tc.CLIENT_PORT,

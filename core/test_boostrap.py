@@ -21,6 +21,7 @@ CONF_PATH = 'test_logs'
 class TestBootstrap(unittest.TestCase):
 
     def setUp(self):
+        super(TestBootstrap, self).setUp()
         time.mock_mode()
 
     def test_general(self):
@@ -124,6 +125,7 @@ class TestBootstrap(unittest.TestCase):
 
     def tearDown(self):
         time.normal_mode()
+        super(TestBootstrap, self).tearDown()
 
 
 if __name__ == '__main__':

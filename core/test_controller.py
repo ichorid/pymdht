@@ -39,6 +39,7 @@ def assert_almost_equal(result, expected, tolerance=.05):
 class TestController(unittest.TestCase):
 
     def setUp(self):
+        super(TestController, self).setUp()
         time.mock_mode()
         
         self.controller = controller.Controller(VERSION_LABEL,
@@ -51,7 +52,7 @@ class TestController(unittest.TestCase):
         self.my_id = self.controller._my_id
         self.querier2 = querier.Querier()#self.my_id)
         self.servers_msg_f = message.MsgFactory(VERSION_LABEL, tc.SERVER_ID)
-        
+
     def _test_start_stop(self):
         self.controller.main_loop()
 
@@ -197,6 +198,7 @@ class TestController(unittest.TestCase):
         
     def tearDown(self):
         time.normal_mode()
+        super(TestController, self).tearDown()
 
 
 if __name__ == '__main__':
